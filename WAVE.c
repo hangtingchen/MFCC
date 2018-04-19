@@ -4,7 +4,8 @@ using namespace hmath;
 
 WAVE_t initWAVE_t()
 {
-	WAVE_t w={{ '\x0',-1,'\x0' },{ '\x0',-1,-1,-1,-1,-1,-1,-1 },{ '\x0',-1,NULL },{ -1,-1,-1,-1,-1 },0};
+	uint16_t a16=(uint16_t)-1;uint32_t a32=(uint32_t)-1;
+	WAVE_t w={{ '\x0',a32,'\x0' },{ '\x0',a32,a16,a16,a32,a32,a16,a16 },{ '\x0',a32,NULL },{ -1,-1,-1,-1,-1 },0};
 	union {
 		uint32_t i;
 		char c[4];
