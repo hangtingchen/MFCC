@@ -72,8 +72,9 @@ static int handler(void* user, const char* section, const char* name, const char
 	else if (MATCH("Frame", "wlen")) { pconfig->wlen = atoi(value);}
 	else if (MATCH("Frame", "inc")) { pconfig->inc = atoi(value); }
 	else if (MATCH("Frame", "saveType")) { 
-		if(strcmp(value,"n\0")==0)pconfig->saveType=0 ;
-		else pconfig->saveType=1;	
+		if(strcmp(value,"f\0")==0)pconfig->saveType=0 ;
+		else if(strcmp(value, "n\0") == 0) pconfig->saveType=2;
+		else pconfig->saveType = 1;
 	}
 	else if (MATCH("Frame", "vecNum")) { pconfig->vecNum = atoi(value); }
 	else if (MATCH("Frame", "fileList")) { strcpy(pconfig->fileList, value);}
@@ -275,7 +276,7 @@ int main(int argc, char** argv) {
 				if (i % step == 0)fprintf(f_result, "\n");
 			}
 		}
-		else{
+		else if(config.saveType==1){
 			for(i=1;i<=VectorSize(dpostProc);i++){
 				fprintf(f_result, "%e\t", dpostProc[i]);
 				if (i % step == 0)fprintf(f_result, "\n");

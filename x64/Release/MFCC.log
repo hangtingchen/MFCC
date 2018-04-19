@@ -1,0 +1,30 @@
+﻿  hmath.c
+hmath.c(88): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
+hmath.c(95): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
+hmath.c(102): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
+hmath.c(109): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
+hmath.c(110): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
+hmath.c(111): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
+hmath.c(140): warning C4133: “函数”: 从“IntMat”到“Matrix”的类型不兼容
+hmath.c(149): warning C4133: “函数”: 从“IntMat”到“Matrix”的类型不兼容
+hmath.c(156): warning C4133: “函数”: 从“IntMat”到“Matrix”的类型不兼容
+hmath.c(157): warning C4133: “函数”: 从“IntMat”到“Matrix”的类型不兼容
+hmath.c(225): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
+hmath.c(226): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
+hmath.c(230): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
+hmath.c(234): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
+  ini.c
+  main.c
+  mfcc.c
+  sigProcess.c
+  WAVE.c
+WAVE.c(7): warning C4047: “初始化”:“char”与“void *”的间接级别不同
+WAVE.c(23): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+WAVE.c(52): warning C4018: “<”: 有符号/无符号不匹配
+WAVE.c(118): warning C4133: “函数”: 从“int **”到“Matrix”的类型不兼容
+WAVE.c(166): warning C4133: “函数”: 从“IntMat”到“Matrix”的类型不兼容
+  正在生成代码
+  All 45 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  已完成代码的生成
+  MFCC.vcxproj -> C:\Users\Administrator\Documents\Visual Studio 2015\Projects\MFCC\x64\Release\MFCC.exe
+  MFCC.vcxproj -> C:\Users\Administrator\Documents\Visual Studio 2015\Projects\MFCC\x64\Release\MFCC.pdb (Full PDB)
