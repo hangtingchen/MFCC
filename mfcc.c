@@ -7,6 +7,7 @@
 #include<stdlib.h>
 #include<math.h>
 
+using namespace hmath;
 
 double Mel(int k, double fres)
 {

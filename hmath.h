@@ -2,12 +2,15 @@
 #ifndef _HMATH_H_
 #define _HMATH_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
 
-#include<stdio.h>
-#include<math.h>
+#include<cstdio>
+#include<cmath>
+#include<cstdlib>
+
+#define pi 3.1415926535897932384626433832795028841971
+
+namespace hmath {
+
 typedef double logdouble;
 typedef void* Ptr;
 typedef double* Vector;
@@ -16,7 +19,7 @@ typedef int* IntVec;
 typedef int* ShortVec;
 typedef int** IntMat;
 //#define pi 3.1415926
-#define pi 3.1415926535897932384626433832795028841971
+
 
 typedef Vector SVector;
 typedef Matrix STriMat;
@@ -39,6 +42,7 @@ typedef struct {	/*用于储存复数的数组结构，主要用于频域和快速傅里叶变换*/
 /*------------------double型向量------------------*/
 Vector CreateVector(int n);
 int VectorSize(Vector v);	/*返回向量的大小*/
+int VectorSize(IntVec v);
 void ZeroVector(Vector v);	/*向量归零*/
 void ShowVector(Vector v);
 void ShowVectorE(Vector v);	/*用科学计数格式打印*/
@@ -80,7 +84,7 @@ void FreeSVector(SVector v);
 void InitXFFT(XFFT* xfftP, int N);	/*输入N来初始化XFFT*/
 void ShowXFFT(XFFT xf);	/*在屏幕上打印一组复数*/
 void ShowXFFTE(XFFT xf);	/*在屏幕上打印复数，用科学计数*/
-void FreeXFFT(XFFT* xfftP);	
+void FreeXFFT(XFFT* xfftP);
 int XFFTSize(XFFT x);	/*输出复数向量的大小*/
 void XFFTToVector(XFFT xf, Vector* vp, int power2Flag);	/*将复数结构转化为数组形式，数组的长度为复数数组的长度的两倍，间隔存储实部和虚部*/
 void VectorToXFFT(XFFT* xfp, Vector v);	/*将长度为2N的数组转化为XFFT形式，要求在v中间隔存储实部和虚部*/
@@ -108,7 +112,9 @@ void ShowIntMat(IntMat m);
 /*------------------double型矩阵------------------*/
 Matrix CreateMatrix(int nrows, int ncols);	/*创建矩阵，需要行数和列数的值的输入*/
 int NumRows(Matrix m);	/*返回矩阵m的行数*/
+int NumRows(IntMat m);
 int NumCols(Matrix m);	/*返回矩阵m的列数*/
+int NumCols(IntMat m);
 void ShowMatrix(Matrix m);
 void FreeMatrix(Matrix m);
 void ZeroMatrix(Matrix m);
@@ -149,10 +155,8 @@ logdouble CovDet(STriMat c);	/*返回log(det(c))*/
 
 /*------------------一些其他函数------------------*/
 int mod(int a, int b);	/*计算a%b，主要考虑a为负值的情况*/
-void reshape(Matrix* mp, Vector v, int r, int c,int dim);	/*将v按照dim重新排列，生成矩阵mp，mp不需要事先分配空间*/
+void reshape(Matrix* mp, Vector v, int r, int c, int dim);	/*将v按照dim重新排列，生成矩阵mp，mp不需要事先分配空间*/
 
-#ifdef __cplusplus
 }
-#endif // __cplusplus
 
 #endif

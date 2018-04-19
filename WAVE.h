@@ -2,10 +2,6 @@
 #ifndef _WAVE_H_
 #define _WAVE_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
-
 #ifdef _MSC_VER  
 typedef __int32 int32_t; 
 typedef unsigned __int32 uint32_t; 
@@ -87,10 +83,7 @@ void print_WAVE(WAVE_t w);
 void free_WAVE(WAVE_t* w);
 
 /*Ð´ÈëWAVEÎÄ¼þ*/
-void writeWaveFile(FILE* f, WAVEParams_t params, IntMat m);
+void writeWaveFile(FILE* f, WAVEParams_t params, hmath::IntMat m);
 
-#ifdef _cplusplus
-}
-#endif // _cplusplus
 
 #endif // !_WAVE_H_

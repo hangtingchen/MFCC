@@ -1,11 +1,8 @@
 #include "hmath.h"
-#include<math.h>
-#include<stdio.h>
-#include<stdlib.h>
 
 //XFFT
 
-void InitXFFT(XFFT * xfftP, int N)
+void hmath::InitXFFT(XFFT * xfftP, int N)
 {
 	(*xfftP).N = N;
 	(*xfftP).real = CreateVector(N);
@@ -14,14 +11,14 @@ void InitXFFT(XFFT * xfftP, int N)
 	ZeroVector((*xfftP).imag);
 }
 
-void ShowXFFT(XFFT xf)
+void hmath::ShowXFFT(XFFT xf)
 {
 	int i;
 	for (i = 1; i <= xf.N; i++)printf("%f+%fi\t", xf.real[i], xf.imag[i]);
 	printf("\n");
 }
 
-void ShowXFFTE(XFFT xf)
+void hmath::ShowXFFTE(XFFT xf)
 {
 	int i;
 	for (i = 1; i <= xf.N; i++) { 
@@ -31,19 +28,19 @@ void ShowXFFTE(XFFT xf)
 	printf("\n");
 }
 
-void FreeXFFT(XFFT* xfftP)
+void hmath::FreeXFFT(XFFT* xfftP)
 {
 	FreeVector((*xfftP).real);
 	FreeVector((*xfftP).imag);
 	(*xfftP).N = -1;
 }
 
-int XFFTSize(XFFT x)
+int hmath::XFFTSize(XFFT x)
 {
 	return x.N;
 }
 
-void XFFTToVector(XFFT xf, Vector * vp,int power2Flag)
+void hmath::XFFTToVector(XFFT xf, Vector * vp,int power2Flag)
 {
 	int i = 0; int N = xf.N; int N2 = N;
 	if (power2Flag)N2 = (int)pow(2.0,ceil(log((double)N)/log(2)));
@@ -60,7 +57,7 @@ void XFFTToVector(XFFT xf, Vector * vp,int power2Flag)
 	}
 }
 
-void VectorToXFFT(XFFT * xfp, Vector v)
+void hmath::VectorToXFFT(XFFT * xfp, Vector v)
 {
 	int i = 0; int N = VectorSize(v) / 2;
 	InitXFFT(xfp, N);
@@ -72,7 +69,7 @@ void VectorToXFFT(XFFT * xfp, Vector v)
 
 //IntVec
 
-IntVec CreateIntVec(int n)
+hmath::IntVec hmath::CreateIntVec(int n)
 {
 	int t;
 	IntVec v = (int*)malloc(sizeof(int)*(n + 1));
@@ -80,30 +77,30 @@ IntVec CreateIntVec(int n)
 	return v;
 }
 
-void FreeIntVec(IntVec v) { free(v); }
+void hmath::FreeIntVec(IntVec v) { free(v); }
 
-void ShowIntVec(IntVec v)
+void hmath::ShowIntVec(IntVec v)
 {
 	int i=0;
 	for (i = 1; i <= VectorSize(v); i++)printf("%d\t", v[i]);
 	printf("\n");
 }
 
-void WriteIntVec(FILE * f, IntVec v)
+void hmath::WriteIntVec(FILE * f, IntVec v)
 {
 	int i=0;
 	for (i = 1; i <= VectorSize(v); i++)fprintf(f, "%d\t", v[i]);
 	fprintf(f, "\n");
 }
 
-void ZeroIntVec(IntVec v)
+void hmath::ZeroIntVec(IntVec v)
 {
 	int i, n;
 	n = VectorSize(v);
 	for (i = 1; i <= n; i++) v[i] = 0;
 }
 
-void CopyIntVec(IntVec v1, IntVec v2)
+void hmath::CopyIntVec(IntVec v1, IntVec v2)
 {
 	int i = 0;
 	if (VectorSize(v1) > VectorSize(v2)) { printf("v1 and v2 size dismatch when copying vector and size(v1)>size(v2)\n"); 	system("pause"); exit(-1); }
@@ -113,15 +110,15 @@ void CopyIntVec(IntVec v1, IntVec v2)
 
 //IntMat
 
-IntMat CreateIntMat(int nrows, int ncols)
+hmath::IntMat hmath::CreateIntMat(int nrows, int ncols)
 {
 	size_t vsize;
 	int *i, j;
 	IntVec *m;
-	char *p;//Ê¹ÓÃcharÊÇÒòÎªÆäÊÇµ¥¸ö×Ö½Ú
+	char *p;//Ê¹ï¿½ï¿½charï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½ï¿½Ö½ï¿½
 	if ((nrows==0)||(ncols == 0))return NULL;
 	p = (char*)malloc(sizeof(int)*((ncols + 1)*nrows) + (nrows + 1) * sizeof(IntVec));
-	//ÆäÖÐµÚÒ»¸ö´¢´æÐÐÊý,Æäºó×÷ÎªË÷Òý,Æäºó¾ØÕóµÄµÚÒ»ÁÐ´¢´æÁÐÊý
+	//ï¿½ï¿½ï¿½Ðµï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½Ò»ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	i = (int *)p; *i = nrows;
 	vsize = (ncols + 1) * sizeof(int);
 	m = (IntVec *)p;
@@ -133,9 +130,9 @@ IntMat CreateIntMat(int nrows, int ncols)
 	return m;
 }
 
-void FreeIntMat(IntMat m) { free(m); }
+void hmath::FreeIntMat(IntMat m) { free(m); }
 
-void ShowIntMat(IntMat m)
+void hmath::ShowIntMat(IntMat m)
 {
 	int r = NumRows(m), c = NumCols(m);int i=0,j=0;
 	for (i = 1; i <= r; i++) {
@@ -144,13 +141,13 @@ void ShowIntMat(IntMat m)
 	}
 }
 
-void ZeroIntMat(IntMat m)
+void hmath::ZeroIntMat(IntMat m)
 {
 	int r = NumRows(m); int c = NumCols(m); int r0 = 0, c0 = 0;
 	for (r0 = 1; r0 <= r; r0++)for (c0 = 1; c0 <= c; c0++)m[r0][c0] = 0;
 }
 
-void WriteIntMat(FILE * f, IntMat m)
+void hmath::WriteIntMat(FILE * f, IntMat m)
 {
 	int i = 0, j = 0;
 	for (i = 1; i <= NumRows(m); i++) {
@@ -161,7 +158,7 @@ void WriteIntMat(FILE * f, IntMat m)
 
 //Vector
 
-Vector CreateVector(int n)
+hmath::Vector hmath::CreateVector(int n)
 {
 	int *i; int j;
 	Vector v = (double*)malloc(sizeof(double)*(n + 1));
@@ -169,49 +166,54 @@ Vector CreateVector(int n)
 	return v;
 }
 
-int VectorSize(Vector v){
+int hmath::VectorSize(Vector v){
 //	printf("%d\n", *((int*)v));
 	return *((int*)v);
 }
 
-void ZeroVector(Vector v)
+int hmath::VectorSize(IntVec v)
+{
+	return *((int*)v);
+}
+
+void hmath::ZeroVector(Vector v)
 {
 	int i, n;
 	n = VectorSize(v);
 	for (i = 1; i <= n; i++) v[i] = 0.0;
 }
 
-void ShowVector(Vector v)
+void hmath::ShowVector(Vector v)
 {
 	int i=0;
 	for (i = 1; i <= VectorSize(v); i++)printf("%f\t", v[i]);
 	printf("\n");
 }
 
-void ShowVectorE(Vector v)
+void hmath::ShowVectorE(Vector v)
 {
 	int i=0;
 	for (i = 1; i <= VectorSize(v); i++)printf("%e\t", v[i]);
 	printf("\n");
 }
 
-void FreeVector(Vector v) { free(v); }
+void hmath::FreeVector(Vector v) { free(v); }
 
-double FindMax(Vector v)
+double hmath::FindMax(Vector v)
 {
 	int i; double m=v[1];
 	for (i = 1; i <= VectorSize(v); i++)if (v[i] > m)m = v[i];
 	return m;
 }
 
-int FindMaxIndex(Vector v)
+int hmath::FindMaxIndex(Vector v)
 {
 	int i; int m = 1;
 	for (i = 1; i <= VectorSize(v); i++)if (v[i] > v[m])m = i;
 	return m;
 }
 
-void CopyVector(Vector v1, Vector v2)
+void hmath::CopyVector(Vector v1, Vector v2)
 {
 	int i = 0;
 	if (VectorSize(v1) > VectorSize(v2)) { printf("v1 and v2 size dismatch when copying vector and size(v1)>size(v2)\n"); 	system("pause"); exit(-1); }
@@ -219,7 +221,7 @@ void CopyVector(Vector v1, Vector v2)
 	for (i = 1; i <= VectorSize(v1); i++)v2[i] = v1[i];
 }
 
-void CopyVector2(Vector v1, IntVec ind1, Vector v2, IntVec ind2)
+void hmath::CopyVector2(Vector v1, IntVec ind1, Vector v2, IntVec ind2)
 {
 	int reMalloc = 0, maxIndex2 = 0; int i = 0; Vector temp = NULL;
 	if (VectorSize(ind1) != VectorSize(ind2)) { printf("index size dismatch when copying vector \n"); 	system("pause"); exit(-1); }
@@ -235,28 +237,28 @@ void CopyVector2(Vector v1, IntVec ind1, Vector v2, IntVec ind2)
 	}
 }
 
-void WriteVectorE(FILE * f, Vector v)
+void hmath::WriteVectorE(FILE * f, Vector v)
 {
 	int i = 0;
 	for (i = 1; i <= VectorSize(v); i++)fprintf(f, "%e\t", v[i]);
 	fprintf(f, "\n");
 }
 
-void WriteVector(FILE * f, Vector v)
+void hmath::WriteVector(FILE * f, Vector v)
 {
 	int i = 0;
 	for (i = 1; i <= VectorSize(v); i++)fprintf(f, "%f\t", v[i]);
 	fprintf(f, "\n");
 }
 
-void LoadVector(FILE * f, Vector v)
+void hmath::LoadVector(FILE * f, Vector v)
 {
 	int i = 0;
 	int size = VectorSize(v);
 	for (i = 1; i <= size; i++)fscanf(f, "%lf\t", &v[i]);
 }
 
-void LoadVectorE(FILE * f, Vector v)
+void hmath::LoadVectorE(FILE * f, Vector v)
 {
 	int size = VectorSize(v); int i = 0;
 	for (i = 1; i <= size; i++)fscanf(f, "%le\t", &v[i]);
@@ -264,7 +266,7 @@ void LoadVectorE(FILE * f, Vector v)
 
 //SVector
 
-Vector CreateSVector(int n)
+hmath::Vector hmath::CreateSVector(int n)
 {
 	SVector v;
 	Ptr *p;
@@ -277,7 +279,7 @@ Vector CreateSVector(int n)
 	return v;
 }
 
-void FreeSVector(SVector v)
+void hmath::FreeSVector(SVector v)
 {
 	Ptr* ptr= (Ptr*)v - 2;
 	free(ptr);
@@ -285,33 +287,33 @@ void FreeSVector(SVector v)
 
 //Methods for Shared Vec or Mat
 
-Ptr GetHook(Ptr m)
+hmath::Ptr hmath::GetHook(Ptr m)
 {
 	Ptr *p = (Ptr*)m; p -= 2;
 	return *p;//interesting
 	//m-=2;return m;
 }
 
-void SetHook(Ptr m, Ptr ptr)
+void hmath::SetHook(Ptr m, Ptr ptr)
 {
 	Ptr *p = (Ptr*)m; p -= 2; *p = ptr;
 }
 
-void SetUse(Ptr m, int n)
+void hmath::SetUse(Ptr m, int n)
 {
 	Ptr* p = (Ptr*)m; --p; *((int *)p) = n;
 }
 
 //Matrix
 
-Matrix CreateMatrix(int nrows, int ncols)
+hmath::Matrix hmath::CreateMatrix(int nrows, int ncols)
 {
 	size_t vsize;
 	int *i, j;
 	Vector *m;
-	char *p;//Ê¹ÓÃcharÊÇÒòÎªÆäÊÇµ¥¸ö×Ö½Ú
+	char *p;//Ê¹ï¿½ï¿½charï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½ï¿½Ö½ï¿½
 	p = (char*)malloc(sizeof(double)*((ncols + 1)*nrows) + (nrows + 1) * sizeof(Vector));
-	//ÆäÖÐµÚÒ»¸ö´¢´æÐÐÊý,Æäºó×÷ÎªË÷Òý,Æäºó¾ØÕóµÄµÚÒ»ÁÐ´¢´æÁÐÊý
+	//ï¿½ï¿½ï¿½Ðµï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½Ò»ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	i = (int *)p; *i = nrows;
 	vsize = (ncols+1)*sizeof(double);
 	m = (Vector *)p;
@@ -323,7 +325,7 @@ Matrix CreateMatrix(int nrows, int ncols)
 	return m;
 }
 
-int NumRows(Matrix m)
+int hmath::NumRows(Matrix m)
 {
 	int *nrows;
 	if (m == NULL)return 0;
@@ -331,7 +333,15 @@ int NumRows(Matrix m)
 	return *nrows;
 }
 
-int NumCols(Matrix m)
+int hmath::NumRows(IntMat m)
+{
+	int *nrows;
+	if (m == NULL)return 0;
+	nrows = (int *)m;
+	return *nrows;
+}
+
+int hmath::NumCols(Matrix m)
 {
 	int *ncols;
 	if (m == NULL)return 0;
@@ -339,7 +349,15 @@ int NumCols(Matrix m)
 	return *ncols;
 }
 
-void ShowMatrix(Matrix m)
+int hmath::NumCols(IntMat m)
+{
+	int *ncols;
+	if (m == NULL)return 0;
+	ncols = (int *)m[1];
+	return *ncols;
+}
+
+void hmath::ShowMatrix(Matrix m)
 {
 	int r = NumRows(m), c = NumCols(m);int i=0,j=0;
 	for (i = 1; i <= r; i++) {
@@ -348,22 +366,22 @@ void ShowMatrix(Matrix m)
 	}
 }
 
-void FreeMatrix(Matrix m) { free(m); }
+void hmath::FreeMatrix(Matrix m) { free(m); }
 
-void ZeroMatrix(Matrix m)
+void hmath::ZeroMatrix(Matrix m)
 {
 	int r = NumRows(m); int c = NumCols(m); int r0 = 0, c0 = 0;
 	for (r0 = 1; r0 <= r; r0++)for (c0 = 1; c0 <= c; c0++)m[r0][c0] = 0.0;
 }
 
-void CopyMatrix(Matrix m1, Matrix m2)
+void hmath::CopyMatrix(Matrix m1, Matrix m2)
 {
 	int r = NumRows(m1); int c = NumCols(m1); int r0 = 0, c0 = 0;
 	if ((NumRows(m1) != NumRows(m2)) || (NumCols(m1) != NumCols(m2))) { printf("m1 and m2 size dismatch when copying matrix\n"); 	system("pause"); exit(-1); }
 	for (r0 = 1; r0 <= r; r0++)for (c0 = 1; c0 <= c; c0++)m2[r0][c0] = m1[r0][c0];
 }
 
-void CopyMatToTri(Matrix m1, STriMat m2)
+void hmath::CopyMatToTri(Matrix m1, STriMat m2)
 {
 	int i = 0, j = 0;
 	if (NumRows(m1) != STriMatSize(m2)) {
@@ -374,7 +392,7 @@ void CopyMatToTri(Matrix m1, STriMat m2)
 	}
 }
 
-void WriteMatrix(FILE * f, Matrix m)
+void hmath::WriteMatrix(FILE * f, Matrix m)
 {
 	int i = 0, j = 0;
 	for (i = 1; i <= NumRows(m); i++) {
@@ -383,7 +401,7 @@ void WriteMatrix(FILE * f, Matrix m)
 	}
 }
 
-void LoadMatrix(FILE * f, Matrix m)
+void hmath::LoadMatrix(FILE * f, Matrix m)
 {
 	int i = 0, j = 0;
 	for (i = 1; i <= NumRows(m); i++) {
@@ -394,7 +412,7 @@ void LoadMatrix(FILE * f, Matrix m)
 
 //SMatrix
 
-SMatrix CreateSMatrix(int nrows, int ncols)
+hmath::SMatrix hmath::CreateSMatrix(int nrows, int ncols)
 {
 	size_t vsize;
 	int *i, j;
@@ -415,7 +433,7 @@ SMatrix CreateSMatrix(int nrows, int ncols)
 	return m;
 }
 
-void FreeSMatrix(SMatrix m)
+void hmath::FreeSMatrix(SMatrix m)
 {
 	Ptr* ptr = (Ptr*)m - 2;
 	free(ptr);
@@ -423,7 +441,7 @@ void FreeSMatrix(SMatrix m)
 
 //STriMat
 
-Matrix CreateSTriMat(int size)
+hmath::Matrix hmath::CreateSTriMat(int size)
 {
 	int *i, j;
 	Vector *m;
@@ -441,14 +459,14 @@ Matrix CreateSTriMat(int size)
 	return m;
 }
 
-int STriMatSize(STriMat m)
+int hmath::STriMatSize(STriMat m)
 {
 	int *nrows;
 	nrows = (int *)m;
 	return *nrows;
 }
 
-void ShowSTriMat(STriMat m)
+void hmath::ShowSTriMat(STriMat m)
 {
 	int i=0,j=0;
 	for (i = 1; i <= STriMatSize(m); i++) {
@@ -457,13 +475,13 @@ void ShowSTriMat(STriMat m)
 	}
 }
 
-void FreeSTriMat(STriMat m)
+void hmath::FreeSTriMat(STriMat m)
 {
 	Ptr* ptr = (Ptr*)m - 2;
 	free(ptr);
 }
 
-void ZeroSTriMat(STriMat m)
+void hmath::ZeroSTriMat(STriMat m)
 {
 	int i, j, size;
 	size = STriMatSize(m);
@@ -471,7 +489,7 @@ void ZeroSTriMat(STriMat m)
 		for (j = 1; j <= i; j++) m[i][j] = 0.0;
 }
 
-void CopySTriMat(STriMat m1, STriMat m2)
+void hmath::CopySTriMat(STriMat m1, STriMat m2)
 {
 	int i, size;
 	size = STriMatSize(m1);
@@ -480,7 +498,7 @@ void CopySTriMat(STriMat m1, STriMat m2)
 		CopyVector(m1[i], m2[i]);
 }
 
-void WriteSTriMat(FILE * f, STriMat m)
+void hmath::WriteSTriMat(FILE * f, STriMat m)
 {
 	int size = STriMatSize(m);int i=0,j=0;double t=0;
 	for (i = 1; i <= size; i++) {
@@ -489,7 +507,7 @@ void WriteSTriMat(FILE * f, STriMat m)
 	}
 }
 
-void LoadStriMat(FILE * f, STriMat m)
+void hmath::LoadStriMat(FILE * f, STriMat m)
 {
 	int size = STriMatSize(m);int i=0,j=0;
 	for (i = 1; i <= size; i++) {
@@ -500,7 +518,7 @@ void LoadStriMat(FILE * f, STriMat m)
 
 
 
-int Choleski(STriMat A, Matrix L)
+int hmath::Choleski(STriMat A, Matrix L)
 {
 	int size, i, j, k;
 	double sum;
@@ -528,7 +546,7 @@ int Choleski(STriMat A, Matrix L)
 	return 1;
 }
 
-void MSolve(Matrix L, int i, Vector x, Vector y)
+void hmath::MSolve(Matrix L, int i, Vector x, Vector y)
 {
 	int nr, j, k;
 	double sum;
@@ -551,7 +569,7 @@ void MSolve(Matrix L, int i, Vector x, Vector y)
 	}
 }
 
-logdouble CovInvert(STriMat c, STriMat invc)
+hmath::logdouble hmath::CovInvert(STriMat c, STriMat invc)
 {
 	Matrix l;     /* Lower Tri Choleski Matrix */
 	Vector x, y;   /* for f/b substitution */
@@ -585,7 +603,7 @@ logdouble CovInvert(STriMat c, STriMat invc)
 	return 2.0*ldet;
 }
 
-logdouble CovDet(STriMat c)
+hmath::logdouble hmath::CovDet(STriMat c)
 {
 	Matrix l;  /* Lower Tri Choleski Matrix */
 	logdouble ldet = 0.0;
@@ -603,14 +621,14 @@ logdouble CovDet(STriMat c)
 	return 2.0*ldet;
 }
 
-int mod(int a, int b)
+int hmath::mod(int a, int b)
 {
 	if (b <= 0)printf("Modulus calculation may be wrong because the dividend <=0 , please check\n");
 	if (a < 0)do { a += b; } while (a < 0);
 	return a%b;
 }
 
-void reshape(Matrix * mp, Vector v, int r, int c, int dim)
+void hmath::reshape(Matrix * mp, Vector v, int r, int c, int dim)
 {
 	int i = 0; int n = VectorSize(v); int index_r, index_c;
 	if (n != (r*c))printf("reshape when numRow*numColumn!=VECTORSIZE !\n");

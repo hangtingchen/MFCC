@@ -1,6 +1,6 @@
 #include "WAVE.h"
 
-
+using namespace hmath;
 
 WAVE_t initWAVE_t()
 {
@@ -115,7 +115,7 @@ void print_WAVE(WAVE_t w)
 
 void free_WAVE(WAVE_t * w)
 {
-	FreeMatrix(w->DATA.data);
+	FreeIntMat(w->DATA.data);
 	*w = initWAVE_t();
 }
 

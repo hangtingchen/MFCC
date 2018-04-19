@@ -3,14 +3,11 @@
 #ifndef _SIGPROCESS_H_
 #define _SIGPROCESS_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
 
 #include"hmath.h"
-#include<stdio.h>
-#include<stdlib.h>
-#include<math.h>
+#include<cstdio>
+#include<cstdlib>
+#include<cmath>
 
 
 
@@ -19,25 +16,25 @@ extern "C" {
 /*zero mean a complete speech waveform nSamples long*/
 void ZeroMean(short *data, long nSamples);
 /*Apply Hamming Window to Speech frame s*/
-void PreEmphasise(Vector s, double k);
+void PreEmphasise(hmath::Vector s, double k);
 /* GenHamWindow: generate precomputed Hamming window function */
 void GenHamWindow(int frameSize);
 /*Apply Hamming Window to Speech frame s*/
-void Ham(Vector s);
+void Ham(hmath::Vector s);
 
 /*自己的模块*/
 /*读入二进制文件，生成十进制文件*/
-Vector pcmToData(FILE* f, long fileLength);
-Vector* pcmToData2(FILE* f, long fileLength, int biteNum, int perSample, int vecNum);
+hmath::Vector pcmToData(FILE* f, long fileLength);
+hmath::Vector* pcmToData2(FILE* f, long fileLength, int biteNum, int perSample, int vecNum);
 /*计算过零率*/
-double zeroCrossingRate(Vector s, int frameSize);
+double zeroCrossingRate(hmath::Vector s, int frameSize);
 
 /*----------------后期处理-------------*/
 /*htk模块*/
 /* EXPORT->WeightCepstrum: Apply cepstral weighting to c */
-void WeightCepstrum(Vector c, int start, int count, int cepLiftering);
+void WeightCepstrum(hmath::Vector c, int start, int count, int cepLiftering);
 /* EXPORT->UnWeightCepstrum: Undo cepstral weighting of c */
-void UnWeightCepstrum(Vector c, int start, int count, int cepLiftering);
+void UnWeightCepstrum(hmath::Vector c, int start, int count, int cepLiftering);
 /* EXPORT->FZeroMean: Zero mean the given data sequence */
 void FZeroMean(double *data, int vSize, int n, int step);
 /* EXPORT->AddRegression: add regression vector at +offset from source vector */
@@ -62,12 +59,9 @@ void NormaliseLogEnergy2(double *data, int n, int step );
 /*-----------------计算谱中心以及子带能量---------------*/
 /*自己的模块*/
 /*计算谱中心*/
-void calBrightness(Vector fftx, double *b,double te);
+void calBrightness(hmath::Vector fftx, double *b,double te);
 /*计算子带能量*/
-void calSubBankE(Vector fftx, Vector subBankEnergy,double te);
+void calSubBankE(hmath::Vector fftx, hmath::Vector subBankEnergy,double te);
 
-#ifdef __cplusplus
-}
-#endif // __cplusplus
 
 #endif

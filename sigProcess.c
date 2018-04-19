@@ -4,6 +4,7 @@
 #include "hmath.h"
 #include "sigProcess.h"
 
+using namespace hmath;
 
 void ZeroMean(short *data, long nSamples)
 {

@@ -1,30 +1,50 @@
-﻿  hmath.c
-hmath.c(88): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
-hmath.c(95): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
-hmath.c(102): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
-hmath.c(109): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
-hmath.c(110): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
-hmath.c(111): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
-hmath.c(140): warning C4133: “函数”: 从“IntMat”到“Matrix”的类型不兼容
-hmath.c(149): warning C4133: “函数”: 从“IntMat”到“Matrix”的类型不兼容
-hmath.c(156): warning C4133: “函数”: 从“IntMat”到“Matrix”的类型不兼容
-hmath.c(157): warning C4133: “函数”: 从“IntMat”到“Matrix”的类型不兼容
-hmath.c(225): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
-hmath.c(226): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
-hmath.c(230): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
-hmath.c(234): warning C4133: “函数”: 从“IntVec”到“Vector”的类型不兼容
+﻿  cnpy.cpp
+cnpy.cpp(70): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+cnpy.cpp(74): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+cnpy.cpp(75): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+cnpy.cpp(82): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+cnpy.cpp(90): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+cnpy.cpp(98): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+cnpy.cpp(113): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+cnpy.cpp(120): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+cnpy.cpp(121): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+cnpy.cpp(131): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+cnpy.cpp(139): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+cnpy.cpp(150): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+  hmath.c
+hmath.c : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
   ini.c
   main.c
+D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\numeric(20): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\numeric(30): note: 参见对正在编译的函数 模板 实例化“_Ty std::_Accumulate_unchecked<const unsigned __int64*,_Ty,_Fn2>(_InIt,_InIt,_Ty,_Fn2 &)”的引用
+          with
+          [
+              _Ty=int,
+              _Fn2=std::multiplies<std::size_t>,
+              _InIt=const unsigned __int64 *
+          ]
+  c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\cnpy.hpp(124): note: 参见对正在编译的函数 模板 实例化“_Ty std::accumulate<std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<unsigned __int64>>>,int,std::multiplies<std::size_t>>(_InIt,_InIt,_Ty,_Fn2)”的引用
+          with
+          [
+              _Ty=int,
+              _InIt=std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<unsigned __int64>>>,
+              _Fn2=std::multiplies<std::size_t>
+          ]
+  main.c(295): note: 参见对正在编译的函数 模板 实例化“void cnpy::npy_save<double>(std::string,const T *,const std::vector<std::size_t,std::allocator<std::_Ty>>,std::string)”的引用
+          with
+          [
+              T=double,
+              _Ty=std::size_t
+          ]
   mfcc.c
   sigProcess.c
   WAVE.c
-WAVE.c(7): warning C4047: “初始化”:“char”与“void *”的间接级别不同
+WAVE.c(7): warning C4838: 从“int”转换到“uint32_t”需要收缩转换
+WAVE.c(7): warning C4838: 从“int”转换到“uint16_t”需要收缩转换
 WAVE.c(23): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
 WAVE.c(52): warning C4018: “<”: 有符号/无符号不匹配
-WAVE.c(118): warning C4133: “函数”: 从“int **”到“Matrix”的类型不兼容
-WAVE.c(166): warning C4133: “函数”: 从“IntMat”到“Matrix”的类型不兼容
   正在生成代码
-  All 45 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  All 433 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   已完成代码的生成
   MFCC.vcxproj -> C:\Users\Administrator\Documents\Visual Studio 2015\Projects\MFCC\x64\Release\MFCC.exe
   MFCC.vcxproj -> C:\Users\Administrator\Documents\Visual Studio 2015\Projects\MFCC\x64\Release\MFCC.pdb (Full PDB)

@@ -1,14 +1,17 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<math.h>
-#include<string.h>
+#include<cstdio>
+#include<cstdlib>
+#include<cmath>
+#include<string>
 #include"ini.h"
 #include "hmath.h"
 #include "mfcc.h"
 #include"sigProcess.h"
 #include"WAVE.h"
+#include"cnpy.hpp"
 
 #define maxBuffLength 600
+
+using namespace hmath;
 
 /*含义
 pi
@@ -267,22 +270,31 @@ int main(int argc, char** argv) {
 	//	for (int i = 1; i <= VectorSize(dpostProc); i++)dpostProc[i] *= 10.0;
 
 		/*6.写入目标文件*/
-		f_result= fopen(pcmFile2, "w");
-		if (!f_result) { printf("open result.dat failed\n"); system("pause");  return -1; }
-		printf("writing the doc...\n");
+
 		if(config.saveType==0){
+			f_result = fopen(pcmFile2, "w");
+			if (!f_result) { printf("open result.dat failed\n"); system("pause");  return -1; }
+			printf("writing the doc...\n");
 			for(i=1;i<=VectorSize(dpostProc);i++){
 				fprintf(f_result, "%f\t", dpostProc[i]);
 				if (i % step == 0)fprintf(f_result, "\n");
 			}
+			fclose(f_result);
 		}
 		else if(config.saveType==1){
+			f_result = fopen(pcmFile2, "w");
+			if (!f_result) { printf("open result.dat failed\n"); system("pause");  return -1; }
+			printf("writing the doc...\n");
 			for(i=1;i<=VectorSize(dpostProc);i++){
 				fprintf(f_result, "%e\t", dpostProc[i]);
 				if (i % step == 0)fprintf(f_result, "\n");
 			}
+			fclose(f_result);
 		}
-		fclose(f_result);
+		else {
+			cnpy::npy_save(pcmFile2, &dpostProc[1], { (size_t)rowNum ,(size_t)step },"w");
+		}
+
 		FreeVector(dpostProc);
 		FreeMatrix(d1);
 	}
