@@ -8,7 +8,6 @@ extern "C" {
 
 #include<stdio.h>
 #include<math.h>
-#define bool int
 typedef double logdouble;
 typedef void* Ptr;
 typedef double* Vector;
@@ -83,7 +82,7 @@ void ShowXFFT(XFFT xf);	/*在屏幕上打印一组复数*/
 void ShowXFFTE(XFFT xf);	/*在屏幕上打印复数，用科学计数*/
 void FreeXFFT(XFFT* xfftP);	
 int XFFTSize(XFFT x);	/*输出复数向量的大小*/
-void XFFTToVector(XFFT xf, Vector* vp, bool power2Flag);	/*将复数结构转化为数组形式，数组的长度为复数数组的长度的两倍，间隔存储实部和虚部*/
+void XFFTToVector(XFFT xf, Vector* vp, int power2Flag);	/*将复数结构转化为数组形式，数组的长度为复数数组的长度的两倍，间隔存储实部和虚部*/
 void VectorToXFFT(XFFT* xfp, Vector v);	/*将长度为2N的数组转化为XFFT形式，要求在v中间隔存储实部和虚部*/
 
 
@@ -143,7 +142,7 @@ void SetUse(Ptr m, int n);
 
 /*------------------求矩阵的逆和行列式的相关------------------*/
 /*------------------算法限制为对称的方阵，因此只能用于下三角矩阵------------------*/
-bool Choleski(STriMat A, Matrix L);
+int Choleski(STriMat A, Matrix L);
 void MSolve(Matrix L, int i, Vector x, Vector y);
 logdouble CovInvert(STriMat c, STriMat invc);	/*计算矩阵c的逆矩阵invc，并返回log(det(c))*/
 logdouble CovDet(STriMat c);	/*返回log(det(c))*/

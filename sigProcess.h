@@ -1,8 +1,18 @@
 #pragma once
+
+#ifndef _SIGPROCESS_H_
+#define _SIGPROCESS_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 #include"hmath.h"
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
+
+
 
 /*---------预处理----------------*/
 /*htk模块*/
@@ -31,16 +41,16 @@ void UnWeightCepstrum(Vector c, int start, int count, int cepLiftering);
 /* EXPORT->FZeroMean: Zero mean the given data sequence */
 void FZeroMean(double *data, int vSize, int n, int step);
 /* EXPORT->AddRegression: add regression vector at +offset from source vector */
-void AddRegression(double *data, int vSize, int n, int step, int offset,int delwin, int head, int tail, bool simpleDiffs);
+void AddRegression(double *data, int vSize, int n, int step, int offset,int delwin, int head, int tail, int simpleDiffs);
 /* EXPORT->AddHeadRegress: add regression at start of data */
-void AddHeadRegress(double *data, int vSize, int n, int step, int offset,int delwin, bool simpleDiffs);
+void AddHeadRegress(double *data, int vSize, int n, int step, int offset,int delwin, int simpleDiffs);
 /* EXPORT->AddTailRegress: add regression at end of data */
-void AddTailRegress(double *data, int vSize, int n, int step, int offset,int delwin, bool simpleDiffs);
+void AddTailRegress(double *data, int vSize, int n, int step, int offset,int delwin, int simpleDiffs);
 /* EXPORT->NormaliseLogEnergy: normalise log energy to range -X .. 1.0 */
 void NormaliseLogEnergy(double *data, int n, int step, double silFloor, double escale);
 /* Regression: add regression vector at +offset from source vector.  If head
 or tail is less than delwin then duplicate first/last vector to compensate */
-void Regress(double *data, int vSize, int n, int step, int offset, int delwin, int head, int tail, bool simpleDiffs);
+void Regress(double *data, int vSize, int n, int step, int offset, int delwin, int head, int tail, int simpleDiffs);
 
 /*自己的模块*/
 /*使用FZroMean后方差归一*/
@@ -55,3 +65,9 @@ void NormaliseLogEnergy2(double *data, int n, int step );
 void calBrightness(Vector fftx, double *b,double te);
 /*计算子带能量*/
 void calSubBankE(Vector fftx, Vector subBankEnergy,double te);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
+#endif

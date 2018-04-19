@@ -37,8 +37,8 @@ double WarpFreq(double fcl, double fcu, double freq, double minFreq, double maxF
 
 /* EXPORT->InitFBank: Initialise an FBankInfo record */
 FBankInfo InitFBank(int frameSize, double sampPeriod, int numChans,
-	double lopass, double hipass, bool usePower, bool takeLogs,
-	bool doubleFFT,
+	double lopass, double hipass, int usePower, int takeLogs,
+	int doubleFFT,
 	double alpha, double warpLowCut, double warpUpCut)
 {
 	FBankInfo fb;

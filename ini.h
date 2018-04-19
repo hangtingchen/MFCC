@@ -6,7 +6,7 @@ home page for more info:
 https://github.com/benhoyt/inih
 
 */
-
+#pragma once
 #ifndef __INI_H__
 #define __INI_H__
 

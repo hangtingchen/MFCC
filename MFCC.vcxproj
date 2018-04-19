@@ -26,12 +26,25 @@
     <ClInclude Include="WAVE.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="hmath.c" />
-    <ClCompile Include="ini.c" />
-    <ClCompile Include="main.c" />
-    <ClCompile Include="mfcc.c" />
-    <ClCompile Include="sigProcess.c" />
-    <ClCompile Include="WAVE.c" />
+    <ClCompile Include="hmath.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="ini.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="main.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="mfcc.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="sigProcess.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="WAVE.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+    </ClCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2361C0C1-3A2C-4357-A9EA-569BEB23D5DC}</ProjectGuid>

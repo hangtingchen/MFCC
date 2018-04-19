@@ -1,3 +1,11 @@
+#pragma once
+#ifndef _MFCC_H_H
+#define _MFCC_H_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 #include"hmath.h"
 #include<math.h>
 
@@ -9,8 +17,8 @@ typedef struct {
 	double sampPeriod;     /* sample period */
 	int fftN;            /* fft size */
 	int klo, khi;         /* lopass to hipass cut-off fft indices */
-	bool usePower;    /* use power rather than magnitude */
-	bool takeLogs;    /* log filterbank channels */
+	int usePower;    /* use power rather than magnitude */
+	int takeLogs;    /* log filterbank channels */
 	double fres;          /* scaled fft resolution */
 	Vector cf;           /* array[1..pOrder+1] of centre freqs */
 	ShortVec loChan;     /* array[1..fftN/2] of loChan index */
@@ -26,8 +34,8 @@ record.
 */
 
 FBankInfo InitFBank(int frameSize, double sampPeriod, int numChans,
-	double lopass, double hipass, bool usePower, bool takeLogs,
-	bool doubleFFT,
+	double lopass, double hipass, int usePower, int takeLogs,
+	int doubleFFT,
 	double alpha, double warpLowCut, double warpUpCut);
 /*
 Initialise an FBankInfo record prior to calling Wave2FBank.
@@ -64,3 +72,9 @@ When called s holds 2*n real values, on exit s holds the
 first  n complex points of the spectrum stored in
 the same format as for fft
 */
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
+#endif

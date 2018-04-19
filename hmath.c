@@ -43,7 +43,7 @@ int XFFTSize(XFFT x)
 	return x.N;
 }
 
-void XFFTToVector(XFFT xf, Vector * vp,bool power2Flag)
+void XFFTToVector(XFFT xf, Vector * vp,int power2Flag)
 {
 	int i = 0; int N = xf.N; int N2 = N;
 	if (power2Flag)N2 = (int)pow(2.0,ceil(log((double)N)/log(2)));
@@ -500,7 +500,7 @@ void LoadStriMat(FILE * f, STriMat m)
 
 
 
-bool Choleski(STriMat A, Matrix L)
+int Choleski(STriMat A, Matrix L)
 {
 	int size, i, j, k;
 	double sum;
@@ -557,7 +557,7 @@ logdouble CovInvert(STriMat c, STriMat invc)
 	Vector x, y;   /* for f/b substitution */
 	logdouble ldet = 0.0;
 	int i, j, n;
-	bool isTri=1;
+	int isTri=1;
 //	for (int i = 1; i <= STriMatSize(c); i++)c[i][i] += 0.000001;
 
 	n = STriMatSize(c); 

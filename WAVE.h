@@ -2,9 +2,9 @@
 #ifndef _WAVE_H_
 #define _WAVE_H_
 
-#ifdef _cplusplus
+#ifdef __cplusplus
 extern "C" {
-#endif // _cplusplus
+#endif // __cplusplus
 
 #ifdef _MSC_VER  
 typedef __int32 int32_t; 

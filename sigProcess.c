@@ -216,7 +216,7 @@ void FNormalize(double * data, int vSize, int n, int step)
 
 /* Regression: add regression vector at +offset from source vector.  If head
 or tail is less than delwin then duplicate first/last vector to compensate */
-void Regress(double *data, int vSize, int n, int step, int offset,int delwin, int head, int tail, bool simpleDiffs)
+void Regress(double *data, int vSize, int n, int step, int offset,int delwin, int head, int tail, int simpleDiffs)
 {
 	double *fp, *fp1, *fp2, *back, *forw;
 	double sum, sigmaT2;
@@ -281,13 +281,13 @@ void calSubBankE(Vector fftx, Vector subBankEnergy,double te)
 
 
 /* EXPORT->AddRegression: add regression vector at +offset from source vector */
-void AddRegression(double *data, int vSize, int n, int step, int offset,int delwin, int head, int tail, bool simpleDiffs)
+void AddRegression(double *data, int vSize, int n, int step, int offset,int delwin, int head, int tail, int simpleDiffs)
 {
 	Regress(data, vSize, n, step, offset, delwin, head, tail, simpleDiffs);
 }
 
 /* EXPORT->AddHeadRegress: add regression at start of data */
-void AddHeadRegress(double *data, int vSize, int n, int step, int offset,int delwin, bool simpleDiffs)
+void AddHeadRegress(double *data, int vSize, int n, int step, int offset,int delwin, int simpleDiffs)
 {
 	double *fp, *fp1, *fp2;
 	int i, j;
@@ -309,7 +309,7 @@ void AddHeadRegress(double *data, int vSize, int n, int step, int offset,int del
 }
 
 /* EXPORT->AddTailRegress: add regression at end of data */
-void AddTailRegress(double *data, int vSize, int n, int step, int offset,int delwin, bool simpleDiffs)
+void AddTailRegress(double *data, int vSize, int n, int step, int offset,int delwin, int simpleDiffs)
 {
 	double *fp, *fp1, *fp2;
 	int i, j;
