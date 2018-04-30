@@ -251,6 +251,7 @@ void calBrightness(Vector fftx, double * b,double te)
 {
 	int i;
 	double sum = 0.0;
+	const double energyfloor = 1.0;if (te <= energyfloor)te = energyfloor;
 	if (((int)VectorSize(fftx)) % 2 != 0)printf("something wrong in cal brightness");
 	for (i = 1; i <=((int)VectorSize(fftx)) / 2; i++) {
 		sum += (fftx[2 * i - 1] * fftx[2 * i - 1] + fftx[2 * i] * fftx[2 * i])*(double)i;
@@ -262,6 +263,7 @@ void calBrightness(Vector fftx, double * b,double te)
 
 void calSubBankE(Vector fftx, Vector subBankEnergy,double te)
 {
+	const double energyfloor = 1.0;
 	int i;
 	int numBank = VectorSize(subBankEnergy); int bankSize = (int)VectorSize(fftx) / (2*numBank);
 	int bankNum = 1;
@@ -276,7 +278,8 @@ void calSubBankE(Vector fftx, Vector subBankEnergy,double te)
 			bankNum++; sum = 0.0; i--;
 		}
 	}
-	subBankEnergy[bankNum] = sum / te;
+	if (te < energyfloor || sum < energyfloor)subBankEnergy[bankNum] = 0.0;
+	else subBankEnergy[bankNum] = sum / te;
 
 }
 

@@ -126,6 +126,7 @@ FBankInfo InitFBank(int frameSize, double sampPeriod, int numChans,
 void Wave2FBank(Vector s, Vector fbank, double *te,double* te2, FBankInfo info)
 {
 	const double melfloor = 1.0;
+	const double energyfloor = 1.0;
 	int k, bin;
 	double t1, t2;   /* real and imag parts */
 	double ek;      /* energy of k'th fft channel */
@@ -141,6 +142,7 @@ void Wave2FBank(Vector s, Vector fbank, double *te,double* te2, FBankInfo info)
 		for (k = 1; k <= info.frameSize; k++)
 			*te += (s[k] * s[k]);
 	}
+	if (*te < energyfloor)*te = energyfloor;
 	/* Apply FFT */
 	for (k = 1; k <= info.frameSize; k++)
 		info.x[k] = s[k];    /* copy to workspace */
@@ -167,6 +169,7 @@ void Wave2FBank(Vector s, Vector fbank, double *te,double* te2, FBankInfo info)
 		*te2 += info.x[2 * k - 1] * info.x[2 * k - 1] + info.x[2 * k] * info.x[2 * k];
 //		printf("te2 %d %f\n",k, *te2);
 	}
+	if (*te2 < energyfloor)*te2 = energyfloor;
 
 	/* Take logs */
 	if (info.takeLogs)

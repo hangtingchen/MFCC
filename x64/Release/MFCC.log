@@ -30,7 +30,7 @@ D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\numeric(20): warn
               _InIt=std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<unsigned __int64>>>,
               _Fn2=std::multiplies<std::size_t>
           ]
-  main.c(295): note: 参见对正在编译的函数 模板 实例化“void cnpy::npy_save<double>(std::string,const T *,const std::vector<std::size_t,std::allocator<std::_Ty>>,std::string)”的引用
+  main.c(296): note: 参见对正在编译的函数 模板 实例化“void cnpy::npy_save<double>(std::string,const T *,const std::vector<std::size_t,std::allocator<std::_Ty>>,std::string)”的引用
           with
           [
               T=double,
@@ -39,10 +39,12 @@ D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\numeric(20): warn
   mfcc.c
   sigProcess.c
   WAVE.c
-WAVE.c(7): warning C4838: 从“int”转换到“uint32_t”需要收缩转换
-WAVE.c(7): warning C4838: 从“int”转换到“uint16_t”需要收缩转换
-WAVE.c(23): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-WAVE.c(52): warning C4018: “<”: 有符号/无符号不匹配
+WAVE.c(8): warning C4838: 从“uint32_t”转换到“char”需要收缩转换
+WAVE.c(8): warning C4838: 从“uint16_t”转换到“char”需要收缩转换
+WAVE.c(8): warning C4244: “初始化”: 从“uint16_t”转换到“char”，可能丢失数据
+WAVE.c(8): warning C4838: 从“uint32_t”转换到“uint16_t”需要收缩转换
+WAVE.c(24): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+WAVE.c(53): warning C4018: “<”: 有符号/无符号不匹配
   正在生成代码
   All 433 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   已完成代码的生成

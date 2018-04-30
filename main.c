@@ -222,6 +222,7 @@ int main(int argc, char** argv) {
 				return 1;
 			}
 			for (i0 = 1; i0 <= config.vecNum; i0++) {
+				if (config.vecNum == 1 && config.channels == 2)i0 = 3;
 				for (i = 1; i <= wlen; i++)d2[i] = d1[i0][i + j];
 //				if (j == 0)ShowVector(d2);
 				//¼ÆËã¹ýÁãÂÊ
