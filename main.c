@@ -24,7 +24,8 @@ energyFlag 是否计算能量
 zeroCrossingFlag 是否计算过零率
 brightFlag 是否计算谱中心
 subBankEFlag 是否计算子带能量以及个数
-regreOrder 加速系数的阶数，1为静态参量，2为静态参量和一阶加速系数，3为静态参量和一阶加速系数和二阶加速系数
+regreOrder 加速系数的阶数，1为静态参量，2为静态参量和一阶加速系数，
+3为静态参量和一阶加速系数和二阶加速系数
 */
 
 /*  最后参量的排列分别为 ( MFCCNum+energyFlag+zeroCrossingFlag+brightFlag+subBankEFlag )*regreOrder  */
@@ -167,7 +168,8 @@ int main(int argc, char** argv) {
 	d3 = CreateVector(MFCCNum);
 
 	info = InitFBank(wlen, samplePeriod, bankNum, lowpassfre, hipassfre, 1, 1, 0, 1.0, 0, 0);
-	//初始化，其中wlen，采样间隔=(10E7/16000),bankNum,最低频率,最高频率,是否计算能量，是否加log，是否doublefft，是否resacle(1.0不进行)
+	//初始化，其中wlen，采样间隔=(10E7/16000),bankNum,最低频率,最高频率,是否计算能量，
+	//是否加log，是否doublefft，是否resacle(1.0不进行)
 	//产生ham窗
 	GenHamWindow(wlen);
 
@@ -182,8 +184,10 @@ int main(int argc, char** argv) {
 		f = fopen(pcmFile1, "rb");
 		if (!f) { printf("open .wav failed\n"); system("pause");  return -1; }
 
-		printf("including : \nMFCCNum	%d\nenergyFlag %d\nzeroCrossingFlag %d\nbrightFlag %d\nsubBandEFlag %d\n", MFCCNum, energyFlag, zeroCrossingFlag, brightFlag, subBandEFlag);
-		printf("the frame feature dimension is %d\n",(MFCCNum + otherFeatureNum) * config.vecNum* regreOrder);
+		printf("including : \nMFCCNum	%d\nenergyFlag %d\nzeroCrossingFlag %d\nbrightFlag %d\nsubBandEFlag %d\n",
+			MFCCNum, energyFlag, zeroCrossingFlag, brightFlag, subBandEFlag);
+		printf("the frame feature dimension is %d\n",(MFCCNum + otherFeatureNum) 
+			* config.vecNum* regreOrder);
 		printf("order %d\n", regreOrder);
 		printf("start...\n");
 
@@ -195,8 +199,10 @@ int main(int argc, char** argv) {
 			system("pause");
 			return 1;
 		}
-		config.sampleNum=wavfile.WAVEParams.numSamples; config.channels = wavfile.WAVEParams.numChannels;
-		if(config.channels==2)d1 = CreateMatrix(wavfile.WAVEParams.numChannels*2, wavfile.WAVEParams.numSamples);
+		config.sampleNum=wavfile.WAVEParams.numSamples; 
+		config.channels = wavfile.WAVEParams.numChannels;
+		if(config.channels==2)d1 = CreateMatrix(wavfile.WAVEParams.numChannels*2, 
+			wavfile.WAVEParams.numSamples);
 		else d1 = CreateMatrix(wavfile.WAVEParams.numChannels, wavfile.WAVEParams.numSamples);
 		for (i0 = 1; i0 <= wavfile.WAVEParams.numChannels; i0++)
 			for (i = 1; i <= wavfile.WAVEParams.numSamples; i++) {
@@ -209,7 +215,8 @@ int main(int argc, char** argv) {
 		for(i0 = 1; i0 <= NumRows(d1); i0++) PreEmphasise(d1[i0],config.preemphasise);
 		fclose(f); free_WAVE(&wavfile);
 
-		dpostProc = CreateVector(((MFCCNum + otherFeatureNum) * config.vecNum* regreOrder *(int)((config.sampleNum - (wlen - inc)) / inc)));
+		dpostProc = CreateVector(((MFCCNum + otherFeatureNum) * config.vecNum* 
+			regreOrder *(int)((config.sampleNum - (wlen - inc)) / inc)));
 		printf("total coef size: %d\n", VectorSize(dpostProc));
 
 		/*2.计算MFCC系数以及其他参量*/
@@ -235,7 +242,8 @@ int main(int argc, char** argv) {
 //				if (j == 0)ShowVector(fbank);
 				//计算谱中心和子带能量，都是百分数
 				brightness = 0.0; 
-				calBrightness(info.x, &brightness, te2); if (subBandEFlag)calSubBankE(info.x, subBankEnergy, te2);
+				calBrightness(info.x, &brightness, te2); 
+				if (subBandEFlag)calSubBankE(info.x, subBankEnergy, te2);
 				//计算MFCC系数
 				if (config.fbankFlag) CopyVector(fbank, d3);
 				else FBank2MFCC(fbank, d3, MFCCNum);;
@@ -245,8 +253,10 @@ int main(int argc, char** argv) {
 				if (energyFlag) { dpostProc[curr_pos] = log(te); curr_pos++; }
 				if (zeroCrossingFlag) { dpostProc[curr_pos] = zc; curr_pos++; } //printf("%f\n", zc);
 				if (brightFlag) { dpostProc[curr_pos] = brightness; curr_pos++; };
-				if (subBandEFlag) { for (j0 = 1; j0 <= subBandEFlag; j0++, curr_pos++)dpostProc[curr_pos] = subBankEnergy[j0]; }
-				if (fftLength) { for (j0 = 1; j0 <= fftLength; j0++, curr_pos++)dpostProc[curr_pos] = sqrt(info.x[2 * j0 - 1] * info.x[2 * j0 - 1] + info.x[2 * j0] * info.x[2 * j0]); }
+				if (subBandEFlag) { for (j0 = 1; j0 <= subBandEFlag; j0++, curr_pos++)
+					dpostProc[curr_pos] = subBankEnergy[j0]; }
+				if (fftLength) { for (j0 = 1; j0 <= fftLength; j0++, curr_pos++)
+					dpostProc[curr_pos] = sqrt(info.x[2 * j0 - 1] * info.x[2 * j0 - 1] + info.x[2 * j0] * info.x[2 * j0]); }
 			}
 			curr_pos += (MFCCNum + otherFeatureNum) * (regreOrder - 1)* config.vecNum ;
 		}
