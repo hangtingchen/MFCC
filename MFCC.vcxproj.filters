@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ini.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="mfcc.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -30,11 +27,11 @@
     <ClInclude Include="..\BasicAudioToolBox\WAVE.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\inih\ini.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ini.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="mfcc.c">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -48,6 +45,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\BasicAudioToolBox\WAVE.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inih\ini.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

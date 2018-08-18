@@ -22,16 +22,14 @@
     <ClInclude Include="..\BasicAudioToolBox\hmath.h" />
     <ClInclude Include="..\BasicAudioToolBox\sigProcess.h" />
     <ClInclude Include="..\BasicAudioToolBox\WAVE.h" />
-    <ClInclude Include="ini.h" />
+    <ClInclude Include="..\inih\ini.h" />
     <ClInclude Include="mfcc.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\BasicAudioToolBox\hmath.c" />
     <ClCompile Include="..\BasicAudioToolBox\sigProcess.c" />
     <ClCompile Include="..\BasicAudioToolBox\WAVE.c" />
-    <ClCompile Include="ini.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
-    </ClCompile>
+    <ClCompile Include="..\inih\ini.c" />
     <ClCompile Include="main.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
@@ -91,7 +89,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\BasicAudioToolBox</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\BasicAudioToolBox;..\inih</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
