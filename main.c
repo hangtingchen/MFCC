@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
@@ -7,6 +8,7 @@
 #include "mfcc.h"
 #include"sigProcess.h"
 #include"WAVE.h"
+
 
 #define maxBuffLength 600
 
@@ -230,8 +232,8 @@ int main(int argc, char** argv) {
 				Wave2FBank(d2, fbank, &te, &te2, info);
 //				if (j == 0)ShowVector(fbank);
 				//计算谱中心和子带能量，都是百分数
-				brightness = 0.0; 
-				calBrightness(info.x, &brightness, te2); if (subBandEFlag)calSubBankE(info.x, subBankEnergy, te2);
+				brightness = calBrightness(info.x); 
+				if (subBandEFlag)calSubBankE(info.x, subBankEnergy);
 				//计算MFCC系数
 				if (config.fbankFlag) CopyVector(fbank, d3);
 				else FBank2MFCC(fbank, d3, MFCCNum);;

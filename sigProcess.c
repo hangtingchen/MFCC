@@ -1,17 +1,181 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<math.h>
-#include "hmath.h"
 #include "sigProcess.h"
 
+/*circle shift the signal*/
+void circshift(Vector v, int shift)
+{
+	int i = 1; Vector v_temp = CreateVector(VectorSize(v));
+	if (shift < 0)do { shift += VectorSize(v); } while (shift < 0);
+	if (shift >= VectorSize(v))do { shift -= VectorSize(v); } while (shift >= VectorSize(v));
+	for (i = 1; (i + shift) <= VectorSize(v); i++)v_temp[i + shift] = v[i];
+	for (; i <= VectorSize(v); i++)v_temp[i + shift - VectorSize(v)] = v[i];
+	CopyVector(v_temp, v);
+	FreeVector(v_temp);
+}
 
-void ZeroMean(short *data, long nSamples)
+/*find the first index of abs|sample| exceeding the thre from the front or end*/
+int find(Vector v, double thre, int FrontOrEndFlag)
+{
+	int i; int m = 0;
+	if (FrontOrEndFlag == 1) {
+		for (i = 1; i <= VectorSize(v); i++)if (fabs(v[i]) > thre) { m = i; break; }
+		return m;
+	}
+	else if (FrontOrEndFlag == -1) {
+		for (i = VectorSize(v); i >= 1; i--)if (fabs(v[i]) > thre) { m = i; break; }
+		return m;
+	}
+	else
+		return 0;
+}
+
+void pad_signal(Vector * yP, Vector x, int Npad)
+{
+	int i = 0; int j = 0;
+	int orig_sz = VectorSize (x);
+	int Norig = VectorSize(x);
+	int end = Norig + (int)floor((double)(Npad - Norig) / 2.0);
+	int end2 = (int)ceil((double)(Npad - Norig) / 2.0);
+	int end3 = Norig + (int)floor((double)(Npad - Norig) / 2.0) + 1;
+	IntVec ind0 = CreateIntVec(2 * Norig);
+	IntVec conjugate0 = CreateIntVec(2 * Norig);
+	IntVec conjugate = CreateIntVec(Npad);
+	IntVec ind = CreateIntVec(Npad);
+	IntVec src = CreateIntVec(end - Norig);
+	IntVec dst = CreateIntVec(end - Norig);
+	ZeroIntVec(ind); ZeroIntVec(conjugate);
+	for (i = 1; i <= Norig; i++)ind0[i] = i;
+	for (i=Norig; i >= 1; i--)ind0[2 * Norig - i + 1] = i;
+	for (i = 1; i <= Norig; i++)conjugate0[i] = 0;
+	for (i = Norig + 1; i <= 2 * Norig; i++)conjugate0[i] = 1;
+	for (i = 1; i <= Norig; i++)ind[i] = i;
+	for (i = 1; i <= VectorSize(src); i++)src[i] = (Norig + i-1) % (VectorSize(ind0)) + 1;
+	for (i = 1; i <= VectorSize(dst); i++)dst[i] = Norig + i;
+	for (i = 1; i <= VectorSize(src); i++)ind[dst[i]] = ind0[src[i]];
+	for (i = 1; i <= VectorSize(src); i++)conjugate[dst[i]] = conjugate0[src[i]];
+	FreeIntVec(src); FreeIntVec(dst);
+	src = CreateIntVec(end2); dst = CreateIntVec(Npad - end3 + 1);
+	for (i = 1; i <= VectorSize(src); i++) {
+		if((VectorSize(ind0) - i)>=0)src[i] = ((VectorSize(ind0) - i) % (VectorSize(ind0))) + 1;
+		else src[i] = ((VectorSize(ind0) - i+ VectorSize(ind0)) % (VectorSize(ind0))) + 1;
+	}
+	for (i = Npad, j = 1; i >= end3; i--, j++)dst[j] = i;
+	for (i = 1; i <= VectorSize(src); i++)ind[dst[i]] = ind0[src[i]];
+	for (i = 1; i <= VectorSize(src); i++)conjugate[dst[i]] = conjugate0[src[i]];
+	*yP = CreateVector(VectorSize(ind));
+	for (i = 1; i <= VectorSize(ind); i++)(*yP)[i] = x[ind[i]];
+	FreeIntVec(ind0); FreeIntVec(conjugate0); FreeIntVec(conjugate); FreeIntVec(ind); FreeIntVec(src); FreeIntVec(dst);
+}
+
+void unpad_signal(Vector * yP, Vector x, int res, int target_sz)
+{
+	int i = 0;
+	int padded_sz = VectorSize(x);
+	double offset = 0;
+	int offset_ds = 0;
+	int target_sz_ds = 1 + floor((double)(target_sz - 1) / pow(2.0, (double)res));
+	*yP = CreateVector(target_sz_ds);
+	for (i = 1; i <= VectorSize(*yP); i++)(*yP)[i] = x[i];
+}
+
+Matrix frameRawSignal(IntVec v, int wlen, int inc, double preEmphasiseCoefft, int enableHamWindow)
+{
+	int numSamples = VectorSize(v);
+	int numFrames = (numSamples - (wlen - inc)) / inc;
+	Matrix m = NULL; 
+	Vector v1 = NULL; Vector HamWindow = NULL;
+	int i = 0, j = 0, pos = 1; double a = 0;
+
+	v1 = CreateVector(numSamples);
+	for (i = 1; i <= numSamples; i++)v1[i] = (double)v[i];
+	PreEmphasise(v1, preEmphasiseCoefft);
+
+	HamWindow = CreateVector(wlen);
+	a = 2 * pi / (wlen - 1);
+	if(enableHamWindow)for (i = 1; i <= wlen; i++)HamWindow[i] = 0.54 - 0.46 * cos(a*(i - 1));
+	else for (i = 1; i <= wlen; i++)HamWindow[i] = 1.0;
+
+	if ((numSamples - (inc - wlen)) % inc != 0)numFrames++;
+	m = CreateMatrix(numFrames, wlen);
+	for (i = 1; i <= numFrames; i++) {
+		pos = (i - 1)*inc + 1;
+		for (j = 1; j <= wlen; j++,pos++) {
+			if (pos > numSamples)m[i][j] = 0.0;
+			else m[i][j] = (double)v1[pos]*HamWindow[j];
+		}
+	}
+	FreeVector(v1); FreeVector(HamWindow);
+	return m;
+}
+
+/*FFT from HTK*/
+/* EXPORT-> FFT: apply fft/invfft to complex s */
+/*
+void FFT(Vector s, int invert)
+{
+	int ii, jj, n, nn, limit, m, j, inc, i;
+	double wx, wr, wpr, wpi, wi, theta;
+	double xre, xri, x;
+
+	n = VectorSize(s);
+	nn = n / 2; j = 1;
+	for (ii = 1; ii <= nn; ii++) {
+		i = 2 * ii - 1;
+		if (j>i) {
+			xre = s[j]; xri = s[j + 1];
+			s[j] = s[i];  s[j + 1] = s[i + 1];
+			s[i] = xre; s[i + 1] = xri;
+		}
+		m = n / 2;
+		while (m >= 2 && j > m) {
+			j -= m; m /= 2;
+		}
+		j += m;
+	};
+	limit = 2;
+	while (limit < n) {
+		inc = 2 * limit; theta = 2 * pi / limit;
+		if (invert) theta = -theta;
+		x = sin(0.5 * theta);
+		wpr = -2.0 * x * x; wpi = sin(theta);
+		wr = 1.0; wi = 0.0;
+		for (ii = 1; ii <= limit / 2; ii++) {
+			m = 2 * ii - 1;
+			for (jj = 0; jj <= (n - m) / inc; jj++) {
+				i = m + jj * inc;
+				j = i + limit;
+				xre = wr * s[j] - wi * s[j + 1];
+				xri = wr * s[j + 1] + wi * s[j];
+				s[j] = s[i] - xre; s[j + 1] = s[i + 1] - xri;
+				s[i] = s[i] + xre; s[i + 1] = s[i + 1] + xri;
+			}
+			wx = wr;
+			wr = wr * wpr - wi * wpi + wr;
+			wi = wi * wpr + wx * wpi + wi;
+		}
+		limit = inc;
+	}
+	if (invert) {
+		for (i = 1; i <= n; i++)
+			s[i] = s[i] / nn;
+	}
+	for (i = 3; i <= n / 2; i++) {
+		if (mod(i, 2) == 0)ii = n + 4 - i;
+		else ii = n + 2 - i;
+		x = s[ii]; s[ii] = s[i]; s[i] = x;
+	}
+}
+*/
+
+
+
+void ZeroMean(IntVec data)
 {
 	long i, hiClip = 0, loClip = 0;
-	short *x;
+	int *x;
 	double sum = 0.0, y, mean;
+	int nSamples = VectorSize(data);
 
-	x = data;
+	x = &data[1];
 	for (i = 0; i<nSamples; i++, x++)
 		sum += *x;
 	mean = sum / (double)nSamples;
@@ -24,7 +188,7 @@ void ZeroMean(short *data, long nSamples)
 		if (y>32767.0) {
 			y = 32767.0; ++hiClip;
 		}
-		*x = (short)((y>0.0) ? y + 0.5 : y - 0.5);
+		*x = (int)((y>0.0) ? y + 0.5 : y - 0.5);
 	}
 	if (loClip>0)
 		printf("ZeroMean: %d samples too -ve\n", loClip);
@@ -33,9 +197,9 @@ void ZeroMean(short *data, long nSamples)
 }
 
 double zeroCrossingRate(Vector s, int frameSize) {
-	int count = 0;int i;
-	for (i = 1; i < frameSize; i++)  if ((s[i] * s[i + 1]) < 0.0)count++; 
-	return ((double)count)/(double)(frameSize-1) ;
+	int count = 0; int i;
+	for (i = 1; i < frameSize; i++)  if ((s[i] * s[i + 1]) < 0.0)count++;
+	return (double)count / (double)(frameSize - 1);
 }
 
 /* EXPORT->PreEmphasise: pre-emphasise signal in s */
@@ -51,172 +215,46 @@ void PreEmphasise(Vector s, double k)
 	s[1] *= 1.0 - preE;
 }
 
-//将PCM文件转化为十进制
-Vector pcmToData(FILE* f, long fileLength) {
-	//short int正好是两个字节
-	short* data = (short *)malloc(sizeof(short)*fileLength / 2);
-	int i = 0;
-	Vector pcmVector = CreateVector(fileLength / 2);
-	for (i = 0; i<fileLength / 2; i++) {
-		//每次读取两个字节,存储到data中
-		fread(&data[i], 2, 1, f);
-	}
-	ZeroMean(data, fileLength / 2);
-	for (i = 0; i<fileLength / 2; i++)	pcmVector[i + 1] = data[i];
-	free(data);
-	PreEmphasise(pcmVector, 0);//不做预加重
-	fclose(f);
-	return pcmVector;
-}
-
-Vector* pcmToData2(FILE* f, long fileLength,int biteNum,int perSample,int vecNum) {
-	//short int正好是两个字节
-	short* data = (short *)malloc(sizeof(short)*fileLength / biteNum);
-	int i = 0;
-	Vector pcmVector1 = CreateVector(fileLength / perSample); Vector pcmVector2 = CreateVector(fileLength / perSample);
-	Vector pcmVector3 = CreateVector(fileLength / perSample); Vector pcmVector4 = CreateVector(fileLength / perSample);
-	Vector* pcmVector = (Vector*)malloc(sizeof(Vector) * 4);
-	pcmVector[0] = pcmVector3; pcmVector[1] = pcmVector1; pcmVector[2] = pcmVector2; pcmVector[3] = pcmVector4;
-	for (i = 0; i<fileLength / biteNum; i++) {
-		//每次读取两个字节,存储到data中
-		fread(&data[i], 2, 1, f);
-	}
-	ZeroMean(data, fileLength / biteNum);
-	for (i = 0; i < fileLength / perSample; i++) { pcmVector1[i + 1] = data[2 * i]; pcmVector2[i + 1] = data[2 * i + 1]; }
-	for (i = 1; i <= fileLength / perSample; i++) { pcmVector3[i] = (double)(int)(0.5*pcmVector1[i] + 0.5*pcmVector2[i] + 0.5); pcmVector4[i] = pcmVector1[i] - pcmVector2[i]; }
-	free(data);
-	fclose(f); 
-	for(i=0;i<4;i++)PreEmphasise(pcmVector[i], 0);
-	if (vecNum == 1||vecNum==4)return pcmVector;
-	else if (vecNum == 2)return &(pcmVector[1]);
-	else return NULL;
-}
-
-
-static int hamWinSize = 0;          /* Size of current Hamming window */
-static Vector hamWin = NULL;        /* Current Hamming window */
-
-/* GenHamWindow: generate precomputed Hamming window function */
-void GenHamWindow(int frameSize)
+double calBrightness(Vector fftx)
 {
 	int i;
-	double a;
-
-	if (hamWin == NULL || VectorSize(hamWin) < frameSize)
-		hamWin = CreateVector(frameSize);
-	a = 2 * pi / (frameSize - 1);
-	for (i = 1; i <= frameSize; i++)
-		hamWin[i] = 0.54 - 0.46 * cos(a*(i - 1));
-	hamWinSize = frameSize;
-}
-
-/* EXPORT->Ham: Apply Hamming Window to Speech frame s */
-void Ham(Vector s)
-{
-	int i, frameSize;
-	frameSize = VectorSize(s);
-	if (hamWinSize != frameSize)
-		GenHamWindow(frameSize);
-	for (i = 1; i <= frameSize; i++) {
-		s[i] *= hamWin[i];
-		//		printf("%d %f\n", i,s[i]);
+	double sum = 0.0;
+	double te = 0.0;
+	double b = 0;
+	if (((int)VectorSize(fftx)) % 2 != 0)printf("something wrong in cal brightness");
+	for (i = 1; i <= ((int)VectorSize(fftx)) / 2; i++) {
+		sum += (fftx[2 * i - 1] * fftx[2 * i - 1] + fftx[2 * i] * fftx[2 * i])*(double)i;
+		te += fftx[2 * i - 1] * fftx[2 * i - 1] + fftx[2 * i] * fftx[2 * i];
 	}
+	b = sum / te;
+	b = b / ((double)VectorSize(fftx) / 2.0);
+	return b;
 }
 
 
-static int cepWinSize = 0;            /* Size of current cepstral weight window */
-static int cepWinL = 0;               /* Current liftering coeff */
-static Vector cepWin = NULL;        /* Current cepstral weight window */
-
-									/* GenCepWin: generate a new cep liftering vector */
-void GenCepWin(int cepLiftering, int count)
+void calSubBankE(Vector fftx, Vector subBankEnergy)
 {
 	int i;
-	double a, Lby2;
-
-	if (cepWin == NULL || VectorSize(cepWin) < count)
-		cepWin = CreateVector( count);
-	a = pi / cepLiftering;
-	Lby2 = cepLiftering / 2.0;
-	for (i = 1; i <= count; i++)
-		cepWin[i] = 1.0 + Lby2*sin(i * a);
-	cepWinL = cepLiftering;
-	cepWinSize = count;
-}
-
-/* EXPORT->WeightCepstrum: Apply cepstral weighting to c */
-void WeightCepstrum(Vector c, int start, int count, int cepLiftering)
-{
-	int i, j;
-
-	if (cepWinL != cepLiftering || count > cepWinSize)
-		GenCepWin(cepLiftering, count);
-	j = start;
-	for (i = 1; i <= count; i++)
-		c[j++] *= cepWin[i];
-}
-
-/* EXPORT->UnWeightCepstrum: Undo cepstral weighting of c */
-void UnWeightCepstrum(Vector c, int start, int count, int cepLiftering)
-{
-	int i, j;
-
-	if (cepWinL != cepLiftering || count > cepWinSize)
-		GenCepWin(cepLiftering, count);
-	j = start;
-	for (i = 1; i <= count; i++)
-		c[j++] /= cepWin[i];
-}
-
-/* The following operations apply to a sequence of n vectors step apart.
-They are used to operate on the 'columns' of data files
-containing a sequence of feature vectors packed together to form a
-continguous block of doubles.  The logical size of each vector is
-vSize (<=step) */
-
-/* EXPORT->FZeroMean: Zero mean the given data sequence */
-void FZeroMean(double *data, int vSize, int n, int step)
-{
-	double sum;
-	double *fp, mean;
-	int i, j;
-
-	for (i = 0; i<vSize; i++) {
-		/* find mean over i'th component */
-		sum = 0.0;
-		fp = data + i;
-		for (j = 0; j<n; j++) {
-			sum += *fp; fp += step;
+	int numBank = VectorSize(subBankEnergy); int bankSize = (int)VectorSize(fftx) / (2 * numBank);
+	int bankNum = 1;
+	double te = 0.0;
+	double sum = 0.0;
+	for (i = 1; i <= (int)VectorSize(fftx) / 2; i++)te+= fftx[2 * i - 1] * fftx[2 * i - 1] + fftx[2 * i] * fftx[2 * i];
+	for (i = 1; i <= (int)VectorSize(fftx) / 2; i++) {
+		if (i <= bankNum*bankSize) {
+			sum += fftx[2 * i - 1] * fftx[2 * i - 1] + fftx[2 * i] * fftx[2 * i];
 		}
-		mean = sum / (double)n;
-		/* subtract mean from i'th components */
-		fp = data + i;
-		for (j = 0; j<n; j++) {
-			*fp -= mean; fp += step;
+		else {
+			subBankEnergy[bankNum] = sum / te;
+			//printf("sum: %f\n", sum/te);
+			bankNum++; sum = 0.0; i--;
 		}
 	}
+	subBankEnergy[bankNum] = sum / te;
+
 }
 
-void FNormalize(double * data, int vSize, int n, int step)
-{
-	double sum;
-	double *fp, sd;
-	int i,j;
-	for (i = 0; i < vSize; i++) {
-		sum = 0.0;
-		fp = data + i;
-		for (j = 0; j < n; j++) { sum += (*fp)*(*fp); fp += step; }
-		sd = sqrt(sum / (double)n);
-		fp = data + i;
-		for (j = 0; j < n; j++) {
-			*fp /= sd; fp += step;
-		}
-	}
-}
-
-/* Regression: add regression vector at +offset from source vector.  If head
-or tail is less than delwin then duplicate first/last vector to compensate */
-void Regress(double *data, int vSize, int n, int step, int offset,int delwin, int head, int tail, int simpleDiffs)
+void Regress(double* data, int vSize, int n, int step, int offset, int delwin, int head, int tail, int simpleDiffs)
 {
 	double *fp, *fp1, *fp2, *back, *forw;
 	double sum, sigmaT2;
@@ -246,91 +284,29 @@ void Regress(double *data, int vSize, int n, int step, int offset,int delwin, in
 	}
 }
 
-void calBrightness(Vector fftx, double * b,double te)
+void RegressMat(Matrix* m, int delwin,int regressOrder)
 {
-	int i;
-	double sum = 0.0;
-	if (((int)VectorSize(fftx)) % 2 != 0)printf("something wrong in cal brightness");
-	for (i = 1; i <=((int)VectorSize(fftx)) / 2; i++) {
-		sum += (fftx[2 * i - 1] * fftx[2 * i - 1] + fftx[2 * i] * fftx[2 * i])*(double)i;
+	Vector v = NULL;
+	int dimOrigin = NumCols(*m), numFrames = NumRows(*m); int dimAfter = dimOrigin*(1+regressOrder);
+	int i = 0, j = 0;
+	
+	if (regressOrder == 0)return;
+
+//	printf("%d\t%d\n", NumRows(*m), NumCols(*m));
+	v = CreateVector(dimOrigin*numFrames*(regressOrder+1));
+	for(i=1;i<=numFrames;i++)for (j = 1; j <= dimOrigin; j++) v[j + dimAfter*(i - 1)] = (*m)[i][j];
+
+	for (i = 1; i <= regressOrder; i++) {
+		Regress(&v[1+(i-1)*dimOrigin], dimOrigin, numFrames, dimAfter, dimOrigin, delwin, 0, 0, 0);
 	}
-	*b = sum / te;
-	*b = (*b) / ((double)VectorSize(fftx) / 2.0);
+	FreeMatrix(*m);
+
+	*m = CreateMatrix(numFrames, dimAfter);
+//	printf("%d\t%d\n", NumRows(*m), NumCols(*m));
+	for (i = 1; i <= numFrames; i++)for (j = 1; j <= dimAfter; j++)  (*m)[i][j]= v[j + dimAfter*(i - 1)]  ;
+	FreeVector(v);
 }
 
-
-void calSubBankE(Vector fftx, Vector subBankEnergy,double te)
-{
-	int i;
-	int numBank = VectorSize(subBankEnergy); int bankSize = (int)VectorSize(fftx) / (2*numBank);
-	int bankNum = 1;
-	double sum = 0.0; 
-	for (i = 1; i <= (int)VectorSize(fftx) / 2; i++) {
-		if (i <= bankNum*bankSize) {
-			sum += fftx[2 * i - 1] * fftx[2 * i - 1] + fftx[2 * i] * fftx[2 * i];
-		}
-		else {
-			subBankEnergy[bankNum] = sum/te;
-			//printf("sum: %f\n", sum/te);
-			bankNum++; sum = 0.0; i--;
-		}
-	}
-	subBankEnergy[bankNum] = sum / te;
-
-}
-
-
-/* EXPORT->AddRegression: add regression vector at +offset from source vector */
-void AddRegression(double *data, int vSize, int n, int step, int offset,int delwin, int head, int tail, int simpleDiffs)
-{
-	Regress(data, vSize, n, step, offset, delwin, head, tail, simpleDiffs);
-}
-
-/* EXPORT->AddHeadRegress: add regression at start of data */
-void AddHeadRegress(double *data, int vSize, int n, int step, int offset,int delwin, int simpleDiffs)
-{
-	double *fp, *fp1, *fp2;
-	int i, j;
-
-	fp = data;
-	if (delwin == 0) {
-		for (i = 1; i <= n; i++) {
-			fp1 = fp; fp2 = fp + offset;
-			for (j = 1; j <= vSize; j++) {
-				*fp2 = *(fp1 + step) - *fp1;
-				++fp1; ++fp2;
-			}
-			fp += step;
-		}
-	}
-	else {
-		Regress(data, vSize, n, step, offset, delwin, 0, delwin, simpleDiffs);
-	}
-}
-
-/* EXPORT->AddTailRegress: add regression at end of data */
-void AddTailRegress(double *data, int vSize, int n, int step, int offset,int delwin, int simpleDiffs)
-{
-	double *fp, *fp1, *fp2;
-	int i, j;
-
-	fp = data;
-	if (delwin == 0) {
-		for (i = 1; i <= n; i++) {
-			fp1 = fp; fp2 = fp + offset;
-			for (j = 1; j <= vSize; j++) {
-				*fp2 = *fp1 - *(fp1 - step);
-				++fp1; ++fp2;
-			}
-			fp += step;
-		}
-	}
-	else {
-		Regress(data, vSize, n, step, offset, delwin, delwin, 0, simpleDiffs);
-	}
-}
-
-/* EXPORT->NormaliseLogEnergy: normalise log energy to range -X .. 1.0 */
 void NormaliseLogEnergy(double *data, int n, int step, double silFloor, double escale)
 {
 	double *p, max, min;
@@ -352,18 +328,51 @@ void NormaliseLogEnergy(double *data, int n, int step, double silFloor, double e
 	}
 }
 
-void NormaliseLogEnergy2(double * data, int n, int step)
+/*Z-normalization, Not tested */
+void ZNormalize(double * data, int vSize, int n, int step)
 {
-	double *p, max;
-	int i;
-	p = data; max = *p;
-	for (i = 1; i<n; i++) {
-		p += step;                   /* step p to next e val */
-		if (*p > max) max = *p;
+	double sum1,sum2;
+	double *fp, sd,mean;
+	int i,j;
+	for (i = 0; i < vSize; i++) {
+		sum1 = 0.0;sum2=0.0;
+		fp = data + i;
+		for (j = 0; j < n; j++) { sum1+=(*fp);sum2 += (*fp)*(*fp); fp += step; }
+		mean=sum1/(double)n;
+		sd = sqrt(sum2 / (double)n-mean*mean);
+		fp = data + i;
+		for (j = 0; j < n; j++) {
+			*fp = ((*fp)-mean)/sd; fp += step;
+		}
 	}
-	p = data;
-	for (i = 0; i < n; i++) {
-		*p /= max;
-		p += step;
+}
+
+static int hamWinSize = 0;          /* Size of current Hamming window */
+static Vector hamWin = NULL;        /* Current Hamming window */
+
+/* GenHamWindow: generate precomputed Hamming window function */
+void GenHamWindow(int frameSize)
+{
+	int i;
+	double a;
+
+	if (hamWin == NULL || VectorSize(hamWin) < frameSize)
+		hamWin = CreateVector(frameSize);
+	a = 2 * pi / (frameSize - 1);
+	for (i = 1; i <= frameSize; i++)
+		hamWin[i] = 0.54 - 0.46 * cos(a*(i - 1));
+	hamWinSize = frameSize;
+}
+
+/* EXPORT->Ham: Apply Hamming Window to Speech frame s */
+void Ham(Vector s)
+{
+	int i, frameSize;
+	frameSize = VectorSize(s);
+	if (hamWinSize != frameSize)
+		GenHamWindow(frameSize);
+	for (i = 1; i <= frameSize; i++) {
+		s[i] *= hamWin[i];
+		//		printf("%d %f\n", i,s[i]);
 	}
 }

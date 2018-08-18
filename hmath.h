@@ -1,4 +1,5 @@
 #pragma once
+#define _CRT_SECURE_NO_WARNINGS
 #ifndef _HMATH_H_
 #define _HMATH_H_
 

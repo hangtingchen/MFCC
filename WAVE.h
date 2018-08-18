@@ -4,7 +4,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif // __cplusplus
+#endif // _cplusplus
 
 #ifdef _MSC_VER  
 typedef __int32 int32_t; 
@@ -89,7 +89,7 @@ void free_WAVE(WAVE_t* w);
 /*Ð´ÈëWAVEÎÄ¼þ*/
 void writeWaveFile(FILE* f, WAVEParams_t params, IntMat m);
 
-#ifdef _cplusplus
+#ifdef __cplusplus
 }
 #endif // _cplusplus
 
