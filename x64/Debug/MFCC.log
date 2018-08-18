@@ -1,48 +1,42 @@
-﻿  WAVE.c
-c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\wave.c(7): warning C4838: 从“int”转换到“uint32_t”需要收缩转换
-c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\wave.c(7): warning C4838: 从“int”转换到“uint16_t”需要收缩转换
-c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\wave.c(23): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\wave.c(52): warning C4018: “<”: 有符号/无符号不匹配
-  sigProcess.c
-  mfcc.c
+﻿  cnpy.cpp
+e:\tools\mfcc\cnpy.cpp(70): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+e:\tools\mfcc\cnpy.cpp(74): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+e:\tools\mfcc\cnpy.cpp(75): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+e:\tools\mfcc\cnpy.cpp(82): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+e:\tools\mfcc\cnpy.cpp(90): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+e:\tools\mfcc\cnpy.cpp(98): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+e:\tools\mfcc\cnpy.cpp(113): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+e:\tools\mfcc\cnpy.cpp(120): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+e:\tools\mfcc\cnpy.cpp(121): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+e:\tools\mfcc\cnpy.cpp(131): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+e:\tools\mfcc\cnpy.cpp(139): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+e:\tools\mfcc\cnpy.cpp(150): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+  hmath.c
+e:\tools\mfcc\hmath.c : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
   main.c
-d:\program files (x86)\microsoft visual studio 14.0\vc\include\numeric(20): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-  d:\program files (x86)\microsoft visual studio 14.0\vc\include\numeric(30): note: 参见对正在编译的函数 模板 实例化“_Ty std::_Accumulate_unchecked<const unsigned __int64*,_Ty,_Fn2>(_InIt,_InIt,_Ty,_Fn2 &)”的引用
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.14.26428\include\numeric(26): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+  e:\tools\mfcc\cnpy.hpp(124): note: 参见对正在编译的函数 模板 实例化“_Ty std::accumulate<std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<unsigned __int64>>>,int,std::multiplies<size_t>>(const _InIt,const _InIt,_Ty,_Fn)”的引用
           with
           [
               _Ty=int,
-              _Fn2=std::multiplies<std::size_t>,
-              _InIt=const unsigned __int64 *
+              _InIt=std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<size_t>>>,
+              _Fn=std::multiplies<size_t>
           ]
-  c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\cnpy.hpp(124): note: 参见对正在编译的函数 模板 实例化“_Ty std::accumulate<std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<unsigned __int64>>>,int,std::multiplies<std::size_t>>(_InIt,_InIt,_Ty,_Fn2)”的引用
-          with
-          [
-              _Ty=int,
-              _InIt=std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<unsigned __int64>>>,
-              _Fn2=std::multiplies<std::size_t>
-          ]
-  c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\main.c(295): note: 参见对正在编译的函数 模板 实例化“void cnpy::npy_save<double>(std::string,const T *,const std::vector<std::size_t,std::allocator<std::_Ty>>,std::string)”的引用
+  e:\tools\mfcc\main.c(296): note: 参见对正在编译的函数 模板 实例化“void cnpy::npy_save<double>(std::string,const T *,const std::vector<size_t,std::allocator<_Ty>>,std::string)”的引用
           with
           [
               T=double,
-              _Ty=std::size_t
+              _Ty=size_t
           ]
-  hmath.c
-c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\hmath.c : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
-  cnpy.cpp
-c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\cnpy.cpp(70): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\cnpy.cpp(74): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\cnpy.cpp(75): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\cnpy.cpp(82): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\cnpy.cpp(90): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\cnpy.cpp(98): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\cnpy.cpp(113): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\cnpy.cpp(120): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\cnpy.cpp(121): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\cnpy.cpp(131): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\cnpy.cpp(139): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-c:\users\administrator\documents\visual studio 2015\projects\mfcc\mfcc\cnpy.cpp(150): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+  mfcc.c
+  sigProcess.c
+  WAVE.c
+e:\tools\mfcc\wave.c(8): warning C4838: 从“uint32_t”转换到“char”需要收缩转换
+e:\tools\mfcc\wave.c(8): warning C4838: 从“uint16_t”转换到“char”需要收缩转换
+e:\tools\mfcc\wave.c(8): warning C4244: “初始化”: 从“uint16_t”转换到“char”，可能丢失数据
+e:\tools\mfcc\wave.c(8): warning C4838: 从“uint32_t”转换到“uint16_t”需要收缩转换
+e:\tools\mfcc\wave.c(24): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+e:\tools\mfcc\wave.c(53): warning C4018: “<”: 有符号/无符号不匹配
   正在生成代码...
   ini.c
-  MFCC.vcxproj -> C:\Users\Administrator\Documents\Visual Studio 2015\Projects\MFCC\x64\Debug\MFCC.exe
-  MFCC.vcxproj -> C:\Users\Administrator\Documents\Visual Studio 2015\Projects\MFCC\x64\Debug\MFCC.pdb (Partial PDB)
+  MFCC.vcxproj -> E:\Tools\MFCC\x64\Debug\MFCC.exe
