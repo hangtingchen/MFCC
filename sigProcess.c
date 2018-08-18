@@ -347,25 +347,22 @@ void ZNormalize(double * data, int vSize, int n, int step)
 	}
 }
 
-static int hamWinSize = 0;          /* Size of current Hamming window */
-static Vector hamWin = NULL;        /* Current Hamming window */
 
 /* GenHamWindow: generate precomputed Hamming window function */
-void GenHamWindow(int frameSize)
+Vector GenHamWindow(int frameSize)
 {
 	int i;
 	double a;
+	Vector hamWin = CreateVector(frameSize);
 
-	if (hamWin == NULL || VectorSize(hamWin) < frameSize)
-		hamWin = CreateVector(frameSize);
 	a = 2 * pi / (frameSize - 1);
 	for (i = 1; i <= frameSize; i++)
 		hamWin[i] = 0.54 - 0.46 * cos(a*(i - 1));
-	hamWinSize = frameSize;
+	return hamWin;
 }
 
 /* EXPORT->Ham: Apply Hamming Window to Speech frame s */
-void Ham(Vector s)
+void Ham(Vector s, Vector hamWin,int hamWinSize)
 {
 	int i, frameSize;
 	frameSize = VectorSize(s);

@@ -116,8 +116,8 @@ int main(int argc, char** argv) {
 	FILE *f ;FILE* f_result;//分别是原文件,处理后的十进制文件
 	FILE *fList;
 	char* pcmFile1;char* pcmFile2;char fileNameBuf[maxBuffLength];
-	Vector d2 , d3 ,fbank,subBankEnergy=NULL;
-	Vector* d1;
+	Vector d2=NULL , d3=NULL ,fbank=NULL,subBankEnergy=NULL,hamWin=NULL;
+	Vector* d1=NULL;
 	FBankInfo info;
 	Vector dpostProc;
 	int otherFeatureNum;
@@ -168,7 +168,7 @@ int main(int argc, char** argv) {
 	info = InitFBank(wlen, samplePeriod, bankNum, lowpassfre, hipassfre, 1, 1, 0, 1.0, 0, 0);
 	//初始化，其中wlen，采样间隔=(10E7/16000),bankNum,最低频率,最高频率,是否计算能量，是否加log，是否doublefft，是否resacle(1.0不进行)
 	//产生ham窗
-	GenHamWindow(wlen);
+	hamWin=GenHamWindow(wlen);
 
 	while(fgets(fileNameBuf,maxBuffLength,fList)!=NULL){
 		curr_pos = 1;
@@ -226,7 +226,7 @@ int main(int argc, char** argv) {
 				//计算过零率
 				zc = zeroCrossingRate(d2, wlen);
 				//加窗
-				Ham(d2);
+				Ham(d2,wlen,hamWin);
 				//te和te2分别是根据信号和fft后的信号计算的能量
 				//经过mel滤波器组
 				Wave2FBank(d2, fbank, &te, &te2, info);

@@ -50,7 +50,7 @@ void NormaliseLogEnergy(double *data, int n, int step, double silFloor, double e
 void ZNormalize(double *data, int vSize, int n, int step);
 
 /* GenHamWindow: generate precomputed Hamming window function */
-void GenHamWindow(int frameSize);
+Vector GenHamWindow(int frameSize);
 /*Apply Hamming Window to Speech frame s*/
 void Ham(Vector s);
 
