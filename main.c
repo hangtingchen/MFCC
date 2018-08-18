@@ -226,7 +226,7 @@ int main(int argc, char** argv) {
 				//计算过零率
 				zc = zeroCrossingRate(d2, wlen);
 				//加窗
-				Ham(d2,wlen,hamWin);
+				Ham(d2,hamWin,wlen);
 				//te和te2分别是根据信号和fft后的信号计算的能量
 				//经过mel滤波器组
 				Wave2FBank(d2, fbank, &te, &te2, info);
