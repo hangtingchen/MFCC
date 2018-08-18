@@ -19,16 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="hmath.h" />
+    <ClInclude Include="..\BasicAudioToolBox\hmath.h" />
+    <ClInclude Include="..\BasicAudioToolBox\sigProcess.h" />
+    <ClInclude Include="..\BasicAudioToolBox\WAVE.h" />
     <ClInclude Include="ini.h" />
     <ClInclude Include="mfcc.h" />
-    <ClInclude Include="sigProcess.h" />
-    <ClInclude Include="WAVE.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="hmath.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
-    </ClCompile>
+    <ClCompile Include="..\BasicAudioToolBox\hmath.c" />
+    <ClCompile Include="..\BasicAudioToolBox\sigProcess.c" />
+    <ClCompile Include="..\BasicAudioToolBox\WAVE.c" />
     <ClCompile Include="ini.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
     </ClCompile>
@@ -37,12 +37,6 @@
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
     </ClCompile>
     <ClCompile Include="mfcc.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="sigProcess.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="WAVE.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
     </ClCompile>
   </ItemGroup>
@@ -96,7 +90,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\BasicAudioToolBox</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>

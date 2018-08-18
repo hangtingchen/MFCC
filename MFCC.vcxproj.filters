@@ -15,39 +15,39 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="WAVE.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="hmath.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="ini.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="mfcc.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="sigProcess.h">
+    <ClInclude Include="..\BasicAudioToolBox\hmath.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BasicAudioToolBox\sigProcess.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BasicAudioToolBox\WAVE.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="WAVE.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="hmath.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="ini.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="mfcc.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="sigProcess.c">
+    <ClCompile Include="main.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="main.c">
+    <ClCompile Include="..\BasicAudioToolBox\hmath.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\BasicAudioToolBox\sigProcess.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\BasicAudioToolBox\WAVE.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
