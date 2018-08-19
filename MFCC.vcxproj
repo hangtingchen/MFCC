@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\BasicAudioToolBox\fileIO.hpp" />
     <ClInclude Include="..\BasicAudioToolBox\hmath.hpp" />
     <ClInclude Include="..\BasicAudioToolBox\sigProcess.hpp" />
     <ClInclude Include="..\BasicAudioToolBox\WAVE.hpp" />
@@ -27,6 +28,7 @@
     <ClInclude Include="mfcc.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\BasicAudioToolBox\fileIO.cpp" />
     <ClCompile Include="..\BasicAudioToolBox\hmath.cpp" />
     <ClCompile Include="..\BasicAudioToolBox\sigProcess.cpp" />
     <ClCompile Include="..\BasicAudioToolBox\WAVE.cpp" />

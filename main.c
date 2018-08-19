@@ -8,12 +8,14 @@
 #include"sigProcess.hpp"
 #include"WAVE.hpp"
 #include"cnpy.hpp"
+#include"fileIO.hpp"
 
 #define maxBuffLength 600
 
 using namespace hmath;
 using namespace hWAVE;
 using namespace hsigProcess;
+using namespace hfileIO;
 
 /*є¬Те
 pi
@@ -79,6 +81,7 @@ static int handler(void* user, const char* section, const char* name, const char
 	else if (MATCH("Frame", "saveType")) { 
 		if(strcmp(value,"f\0")==0)pconfig->saveType=0 ;
 		else if(strcmp(value, "n\0") == 0) pconfig->saveType=2;
+		else if (strcmp(value, "b\0") == 0) pconfig->saveType = 3;
 		else pconfig->saveType = 1;
 	}
 	else if (MATCH("Frame", "vecNum")) { pconfig->vecNum = atoi(value); }
@@ -128,6 +131,7 @@ int main(int argc, char** argv) {
 	int vSize,rowNum,step;
 	double zc,te,te2,brightness;
 	int i,j,i0,j0;
+	BinaryFileStruct bf = { -1,-1,-1,-1,nullptr };
 
 	i0 = ini_parse(argv[1], handler, &config);
 	if (i0<0) {
@@ -294,7 +298,15 @@ int main(int argc, char** argv) {
 			}
 			fclose(f_result);
 		}
-		else {
+		else if (config.saveType == 3) {
+			bf.numFrames = rowNum; bf.lengthFrame = 10000;
+			bf.sizeFrameInByte = step * 4; bf.typeFlag = 0x49;
+			f_result = fopen(pcmFile2, "rb");
+			if (!f_result) { printf("open result.dat failed\n"); system("pause");  return -1; }
+			printf("writing the doc...\n");
+			writeBinaryFile(f_result, bf, dpostProc);
+		}
+		else if (config.saveType ==2) {
 			cnpy::npy_save(pcmFile2, &dpostProc[1], { (size_t)rowNum ,(size_t)step },"w");
 		}
 
@@ -306,7 +318,7 @@ int main(int argc, char** argv) {
 	FreeVector(fbank);
 	FreeVector(d3);
 	FreeVector(subBankEnergy);
-	FreeSVector(hamWin);
+	FreeVector(hamWin);
 	fclose(fList);
 	//system("pause");
 	return 0;
