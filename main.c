@@ -293,7 +293,7 @@ int main(int argc, char** argv) {
 	FreeVector(fbank);
 	FreeVector(d3);
 	FreeVector(subBankEnergy);
-	FreeSVector(hamWin);
+	FreeVector(hamWin);
 	fclose(fList);
 	//system("pause");
 	return 0;
