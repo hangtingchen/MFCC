@@ -2,7 +2,7 @@
 
 /* EXPORT->Mel: return mel-frequency corresponding to given FFT index */
 #include"mfcc.h"
-#include"hmath.h"
+#include"hmath.hpp"
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>

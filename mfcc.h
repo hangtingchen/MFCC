@@ -3,7 +3,7 @@
 #define _MFCC_H_H
 
 
-#include"hmath.h"
+#include"hmath.hpp"
 #include<cmath>
 
 //¼ÆËãMFCCÌØÕ÷

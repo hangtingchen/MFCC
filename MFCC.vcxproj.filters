@@ -21,16 +21,16 @@
     <ClInclude Include="cnpy.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\BasicAudioToolBox\hmath.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\BasicAudioToolBox\sigProcess.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\BasicAudioToolBox\WAVE.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\inih\ini.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BasicAudioToolBox\hmath.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BasicAudioToolBox\sigProcess.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BasicAudioToolBox\WAVE.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,16 +44,16 @@
     <ClCompile Include="cnpy.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\BasicAudioToolBox\hmath.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\BasicAudioToolBox\sigProcess.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\BasicAudioToolBox\WAVE.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="..\inih\ini.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\BasicAudioToolBox\hmath.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\BasicAudioToolBox\sigProcess.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\BasicAudioToolBox\WAVE.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

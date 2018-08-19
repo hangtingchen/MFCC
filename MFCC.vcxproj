@@ -19,17 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\BasicAudioToolBox\hmath.h" />
-    <ClInclude Include="..\BasicAudioToolBox\sigProcess.h" />
-    <ClInclude Include="..\BasicAudioToolBox\WAVE.h" />
+    <ClInclude Include="..\BasicAudioToolBox\hmath.hpp" />
+    <ClInclude Include="..\BasicAudioToolBox\sigProcess.hpp" />
+    <ClInclude Include="..\BasicAudioToolBox\WAVE.hpp" />
     <ClInclude Include="..\inih\ini.h" />
     <ClInclude Include="cnpy.hpp" />
     <ClInclude Include="mfcc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\BasicAudioToolBox\hmath.c" />
-    <ClCompile Include="..\BasicAudioToolBox\sigProcess.c" />
-    <ClCompile Include="..\BasicAudioToolBox\WAVE.c" />
+    <ClCompile Include="..\BasicAudioToolBox\hmath.cpp" />
+    <ClCompile Include="..\BasicAudioToolBox\sigProcess.cpp" />
+    <ClCompile Include="..\BasicAudioToolBox\WAVE.cpp" />
     <ClCompile Include="..\inih\ini.c" />
     <ClCompile Include="cnpy.cpp">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCpp</CompileAs>
@@ -97,6 +97,9 @@
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\inih;..\BasicAudioToolBox</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\inih;..\BasicAudioToolBox</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\inih;..\BasicAudioToolBox</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
