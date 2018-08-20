@@ -90,7 +90,6 @@ int main(int argc, char** argv) {
 		printf("Thread ID %d\n", ID);
 		MFCCWapper(fileListString[i].c_str(), fileListString[i + 1].c_str(),mwts,config,ID);
 	}
-	
 	MFCCWapperTempFree(&mwts,config);
 	//system("pause");
 	return 0;

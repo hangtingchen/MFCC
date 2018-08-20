@@ -438,7 +438,6 @@ void MFCCWapper(const char* inputWAV, const char* outputFile, MFCCWapperTempStru
 	}
 	//	扩大
 	//	for (int i = 1; i <= VectorSize(dpostProc); i++)dpostProc[i] *= 10.0;
-
 	/*6.写入目标文件*/
 	if (config.saveType == 0) {
 		fout = fopen(outputFile, "w");
@@ -467,12 +466,11 @@ void MFCCWapper(const char* inputWAV, const char* outputFile, MFCCWapperTempStru
 		if (!fout) { printf("open result.dat failed\n"); system("pause");  exit(1); }
 		printf("writing the doc...\n");
 		writeBinaryFile(fout, bf, dpostProc);
+		fclose(fout);
 	}
 	else if (config.saveType == 2) {
 		cnpy::npy_save(outputFile, &dpostProc[1], { (size_t)rowNum ,(size_t)step }, "w");
 	}
-	fclose(fout);
-
 	FreeVector(dpostProc);
 	FreeMatrix(d1);
 }

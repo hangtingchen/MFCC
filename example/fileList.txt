@@ -1,1 +1,1 @@
-E:\Tools\MFCC\example\a001_0_30.wav	E:\Tools\MFCC\example\a001_0_30.fbank
+example/a001_0_30.wav	example/a001_0_30.fbank
