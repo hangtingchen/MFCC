@@ -3,6 +3,7 @@
 /* EXPORT->Mel: return mel-frequency corresponding to given FFT index */
 #include"mfcc.h"
 #include"hmath.hpp"
+#include"sigProcess.hpp"
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
@@ -292,4 +293,186 @@ void Realft(Vector s)
 	xr1 = s[1];
 	s[1] = xr1 + s[2];
 	s[2] = 0.0;
+}
+
+MFCCWapperTempStruct MFCCWapperTempInit(Config config) {
+	FBankInfo* fbVec = (FBankInfo*)malloc(sizeof(FBankInfo)*config.numThreads);
+	hmath::Vector hamWin = hsigProcess::GenHamWindow(config.wlen);
+	hmath::Matrix subBankEnergy = NULL;
+	hmath::Matrix fbank = CreateMatrix(config.numThreads, config.bankNum);
+	hmath::Matrix d2 = CreateMatrix(config.numThreads, config.wlen);
+	hmath::Matrix d3 = CreateMatrix(config.numThreads, config.MFCCNum);
+	MFCCWapperTempStruct mfccWapperTempStruct = { NULL,NULL,NULL,NULL,NULL,NULL };
+	if (config.subBandEFlag > 0)subBankEnergy = CreateMatrix(config.numThreads, config.subBandEFlag);
+
+	for (int i = 0; i < config.numThreads; i++) {
+		fbVec[i] = InitFBank(config.wlen, config.samplePeriod,
+			config.bankNum, config.lowpassfre, config.hipassfre,
+			1, 1, 0, 1.0, 0, 0);
+	}
+	mfccWapperTempStruct = { fbVec ,hamWin ,subBankEnergy ,fbank,d2,d3 };
+	return mfccWapperTempStruct;
+}
+
+void MFCCWapperTempFree(MFCCWapperTempStruct* mwts,Config config)
+{
+	FreeMatrix(mwts->d2); mwts->d2 = NULL;
+	FreeMatrix(mwts->d3); mwts->d3 = NULL;
+	FreeMatrix(mwts->fbank); mwts->fbank = NULL;
+	FreeVector(mwts->hamWin); mwts->hamWin = NULL;
+	for (int i = 0; i < config.numThreads; i++) {
+		FreeVector(mwts->fbVec[i].cf); mwts->fbVec[i].cf = NULL;
+		FreeIntVec(mwts->fbVec[i].loChan); mwts->fbVec[i].loChan = NULL;
+		FreeVector(mwts->fbVec[i].loWt); mwts->fbVec[i].loWt = NULL;
+		FreeVector(mwts->fbVec[i].x); mwts->fbVec[i].x = NULL;
+	}
+	if (config.subBandEFlag) {
+		FreeMatrix(mwts->subBankEnergy);
+		mwts->subBankEnergy = NULL;
+	}
+}
+
+void MFCCWapper(const char* inputWAV, const char* outputFile, MFCCWapperTempStruct mwts,
+	Config config,int threadNum) {
+	FILE* fin = NULL,*fout=NULL;
+	int otherFeatureNum = config.MFCC0thFlag + config.energyFlag +
+		config.zeroCrossingFlag + config.brightFlag + config.subBandEFlag + config.fftLength;
+	Vector* d1; Vector dpostProc = NULL;
+	double te = 0.0, te2 = 0.0, brightness = 0.0;
+	hfileIO::BinaryFileStruct bf = { -1,-1,-1,-1,nullptr };
+	int curr_pos = 1;
+	printf("Convert %s to %s\n", inputWAV, outputFile);
+	fin = fopen(inputWAV, "rb");
+	if (!fin) { printf("open .wav failed\n"); system("pause");  exit(1); }
+	printf("including : \nMFCCNum	%d\nenergyFlag %d\nzeroCrossingFlag %d\nbrightFlag %d\nsubBandEFlag %d\n",
+		config.MFCCNum, config.energyFlag,config.zeroCrossingFlag,config.brightFlag, config.subBandEFlag);
+	printf("the frame feature dimension is %d\n", (config.MFCCNum + otherFeatureNum) * config.vecNum* config.regreOrder);
+	hWAVE::WAVE_t wavfile = hWAVE::initWAVE_t();
+	hWAVE::loadWAVEFile(&wavfile, fin); 
+	hWAVE::print_WAVE(wavfile);
+	if(config.zeroMeanSigFlag || wavfile.WAVEParams.containerLengthInByte==2)
+		for (int i = 1; i <= wavfile.WAVEParams.numChannels; i++) {
+			hsigProcess::ZeroMean(wavfile.DATA.data[i]);
+		}
+	if (config.sampleRate != wavfile.WAVEParams.sampleRate) {
+		printf("Sample rate not right");
+		system("pause");
+		exit(1);
+	}
+	config.sampleNum = wavfile.WAVEParams.numSamples; 
+	config.channels = wavfile.WAVEParams.numChannels;
+
+	int vSize = (config.MFCCNum + otherFeatureNum)*config.vecNum;
+	int rowNum = (config.sampleNum - (config.wlen - config.inc)) / config.inc +
+		((config.sampleNum - (config.wlen - config.inc)) / config.inc>0);
+	int step = (config.MFCCNum + otherFeatureNum) * config.regreOrder*config.vecNum;
+	if (config.channels == 2)d1 = CreateMatrix(wavfile.WAVEParams.numChannels * 2, wavfile.WAVEParams.numSamples);
+	else d1 = CreateMatrix(wavfile.WAVEParams.numChannels, wavfile.WAVEParams.numSamples);
+	for (int i0 = 1; i0 <= wavfile.WAVEParams.numChannels; i0++)
+		for (int i = 1; i <= wavfile.WAVEParams.numSamples; i++) {
+			d1[i0][i] = (double)wavfile.DATA.data[i0][i];
+		}
+	if (config.channels == 2)for (int i = 1; i <= wavfile.WAVEParams.numSamples; i++) {
+		d1[3][i] = 0.5*(d1[1][i] + d1[2][i]);
+		d1[4][i] = d1[1][i] - d1[2][i];
+	}
+	for (int i0 = 1; i0 <= NumRows(d1); i0++) hsigProcess::PreEmphasise(d1[i0], config.preemphasise);
+	fclose(fin); hWAVE::free_WAVE(&wavfile);
+
+	dpostProc = CreateVector(((config.MFCCNum + otherFeatureNum) * config.vecNum* config.regreOrder *rowNum));
+	printf("total coef size: %d\n", VectorSize(dpostProc));
+
+	/*2.计算MFCC系数以及其他参量*/
+	//d2,d3分别为经过mel滤波器组的信号，MFCC参数
+	//最终的数据
+	for (int j = 0; j < rowNum; j ++) {
+		if (config.vecNum > NumRows(d1)) {
+			printf("vecnum %d > num_channels %d ", config.vecNum, config.channels);
+			system("pause");
+			exit(1);
+		}
+		for (int i0 = 1; i0 <= config.vecNum; i0++) {
+			ZeroVector(mwts.d2[threadNum]);
+			if (config.vecNum == 1 && config.channels == 2)i0 = 3;
+			for (int i = 1; i <= config.wlen && j*config.inc+i<= config.sampleNum ; i++)
+				mwts.d2[threadNum][i] = d1[i0][i + j*config.inc];
+			//				if (j == 0)ShowVector(d2);
+			//计算过零率
+			double zc = hsigProcess::zeroCrossingRate(mwts.d2[threadNum], config.wlen);
+			//加窗
+			hsigProcess::Ham(mwts.d2[threadNum],mwts.hamWin,config. wlen);
+			//te和te2分别是根据信号和fft后的信号计算的能量
+			//经过mel滤波器组
+			Wave2FBank(mwts.d2[threadNum], mwts.fbank[threadNum], &te, &te2, mwts.fbVec[threadNum-1]);
+			//				if (j == 0)ShowVector(fbank);
+			//计算谱中心和子带能量，都是百分数
+			brightness = hsigProcess::calBrightness(mwts.fbVec[threadNum-1].x);
+			if (config.subBandEFlag)hsigProcess::calSubBankE(mwts.fbVec[threadNum-1].x, mwts.subBankEnergy[threadNum]);
+			//计算MFCC系数
+			if (config.fbankFlag) CopyVector(mwts.fbank[threadNum],mwts.d3[threadNum]);
+			else FBank2MFCC(mwts.fbank[threadNum], mwts.d3[threadNum], config.MFCCNum);
+			//迁移数据，并且根据flag加上部分特征
+			for (int j0 = 1; j0 <= config.MFCCNum; j0++, curr_pos++)dpostProc[curr_pos] = mwts.d3[threadNum][j0];
+			if (config.MFCC0thFlag) { dpostProc[curr_pos] = FBank2C0(mwts.fbank[threadNum]); curr_pos++; }
+			if (config.energyFlag) { dpostProc[curr_pos] = log(te); curr_pos++; }
+			if (config.zeroCrossingFlag) { dpostProc[curr_pos] = zc; curr_pos++; } //printf("%f\n", zc);
+			if (config.brightFlag) { dpostProc[curr_pos] = brightness; curr_pos++; };
+			if (config.subBandEFlag) { for (int j0 = 1; j0 <= config.subBandEFlag; j0++, curr_pos++)dpostProc[curr_pos] = mwts.subBankEnergy[threadNum][j0]; }
+			if (config.fftLength) { for (int j0 = 1; j0 <= config.fftLength; j0++, curr_pos++)dpostProc[curr_pos] = sqrt(mwts.fbVec[threadNum-1].x[2 * j0 - 1] * mwts.fbVec[threadNum-1].x[2 * j0 - 1] + mwts.fbVec[threadNum-1].x[2 * j0] * mwts.fbVec[threadNum-1].x[2 * j0]); }
+		}
+		curr_pos += (config.MFCCNum + otherFeatureNum) * (config.regreOrder - 1)* config.vecNum;
+	}
+	printf("post-processing...\n");
+	//计算加速参量
+	//	NormaliseLogEnergy(&dpostProc[1 + MFCCNum], rowNum, step, 50.0, 0.1);
+	/*3.能量归一化*/
+	//	NormaliseLogEnergy2(&dpostProc[1 + MFCCNum], rowNum, step);
+	/*4.计算加速系数*/
+	for (int j = 1; j < config.regreOrder; j++) {
+		hsigProcess::Regress(&dpostProc[1+(j-1)*vSize], vSize, rowNum, step, vSize, config.delwin, 0, 0, 0);
+	}
+	/*5.MFCC参量归一归整*/
+	//MFCC系数均值方差归整，不对其他参数做此操作
+	if (config.znormFlag) {
+		hsigProcess::ZNormalize(&dpostProc[1], step, rowNum, step);
+	}
+	//	扩大
+	//	for (int i = 1; i <= VectorSize(dpostProc); i++)dpostProc[i] *= 10.0;
+
+	/*6.写入目标文件*/
+	if (config.saveType == 0) {
+		fout = fopen(outputFile, "w");
+		if (!fout) { printf("open result.dat failed\n"); system("pause");  exit(1); }
+		printf("writing the doc...\n");
+		for (int i = 1; i <= VectorSize(dpostProc); i++) {
+			fprintf(fout, "%f\t", dpostProc[i]);
+			if (i % step == 0)fprintf(fout, "\n");
+		}
+		fclose(fout);
+	}
+	else if (config.saveType == 1) {
+		fout = fopen(outputFile, "w");
+		if (!fout) { printf("open result.dat failed\n"); system("pause");  exit(1); }
+		printf("writing the doc...\n");
+		for (int i = 1; i <= VectorSize(dpostProc); i++) {
+			fprintf(fout, "%e\t", dpostProc[i]);
+			if (i % step == 0)fprintf(fout, "\n");
+		}
+		fclose(fout);
+	}
+	else if (config.saveType == 3) {
+		bf.numFrames = rowNum; bf.lengthFrame = 10000;
+		bf.sizeFrameInByte = step * 4; bf.typeFlag = 0x49;
+		fout = fopen(outputFile, "rb");
+		if (!fout) { printf("open result.dat failed\n"); system("pause");  exit(1); }
+		printf("writing the doc...\n");
+		writeBinaryFile(fout, bf, dpostProc);
+	}
+	else if (config.saveType == 2) {
+		cnpy::npy_save(outputFile, &dpostProc[1], { (size_t)rowNum ,(size_t)step }, "w");
+	}
+	fclose(fout);
+
+	FreeVector(dpostProc);
+	FreeMatrix(d1);
 }
