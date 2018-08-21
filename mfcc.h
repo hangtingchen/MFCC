@@ -41,6 +41,8 @@ typedef struct {
 	char fileList[maxBuffLength];
 }Config;
 
+void configCheck(Config* config);
+
 static int handler(void* user, const char* section, const char* name, const char* value) {
 	Config* pconfig = (Config*)user;
 #define MATCH(s, n) strcmp(section, s) == 0 && strcmp(name, n) == 0
@@ -153,6 +155,8 @@ MFCCWapperTempStruct MFCCWapperTempInit(Config config);
 
 void MFCCWapperTempFree(MFCCWapperTempStruct* mwts, Config config);
 
-void MFCCWapper(const char* inputWAV, const char* outputFile, MFCCWapperTempStruct mwts, Config config, int threadNum);
+void MFCCWapper(const char* inputWAV, const char* outputFile, 
+	MFCCWapperTempStruct mwts, Config config, int threadNum,
+	const hWAVE::WAVEParams_t * const wParamStd=NULL);
 
 #endif

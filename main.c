@@ -63,10 +63,7 @@ int main(int argc, char** argv) {
 	}
 	else printf("finish reading the config.ini\n");
 
-	config.samplePeriod = (double)1e7 / (double)config.sampleRate;
-	if (config.fbankFlag) {
-		config.MFCCNum = config.bankNum; config.MFCC0thFlag = 0;
-	}
+	configCheck(&config);
 
 	std::ifstream fileList(config.fileList);
 	std::vector<std::string> fileListString;

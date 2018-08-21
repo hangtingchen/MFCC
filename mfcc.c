@@ -10,6 +10,39 @@
 
 using namespace hmath;
 
+void configCheck(Config* config){
+	if (!(config->sampleRate == 44100 || config->sampleRate == 8000
+		|| config->sampleRate == 16000)) {
+		printf("Unusual sample rate %d\n", config->sampleRate);
+	}
+	config->samplePeriod = (double)1e7 / (double)config->sampleRate;
+	if (config->hipassfre > config->sampleRate ||
+		config->hipassfre < 100 || config->lowpassfre < 0 ||
+		config->hipassfre < config->lowpassfre) {
+		printf("Unexpected high bound and low bound %f %f\n", config->lowpassfre, config->hipassfre);
+		exit(1);
+	}
+	if (config->preemphasise < 0) {
+		printf("Unexpected preemphasise %f\n", config->preemphasise);
+		exit(1);
+	}
+	if (config->fbankFlag) {
+		config->MFCCNum = config->bankNum;
+		config->MFCC0thFlag = 0;
+	}
+	if (config->fftLength) {
+		printf("You want to extract fft coefft. Don't recommand to do this\n");
+	}
+	if (!(config->vecNum == 1 || config->vecNum == 2 || config->vecNum == 4)) {
+		printf("Unexpected vecNum %d\n", config->vecNum);
+		exit(1);
+	}
+	if (config->sampleRate <= 0 || config->wlen <= 0 || config->inc <= 0 || config->fftLength < 0 || config->numThreads <= 0) {
+		printf("Check your sampleRate wlen inc fftLength numThreads\n");
+		exit(1);
+	}
+}
+
 double Mel(int k, double fres)
 {
 	return 1127 * log(1 + (k - 1)*fres);
@@ -333,7 +366,7 @@ void MFCCWapperTempFree(MFCCWapperTempStruct* mwts,Config config)
 }
 
 void MFCCWapper(const char* inputWAV, const char* outputFile, MFCCWapperTempStruct mwts,
-	Config config,int threadNum) {
+	Config config,int threadNum, const hWAVE::WAVEParams_t * const wParamStd) {
 	FILE* fin = NULL,*fout=NULL;
 	int otherFeatureNum = config.MFCC0thFlag + config.energyFlag +
 		config.zeroCrossingFlag + config.brightFlag + config.subBandEFlag + config.fftLength;
@@ -350,6 +383,11 @@ void MFCCWapper(const char* inputWAV, const char* outputFile, MFCCWapperTempStru
 	hWAVE::WAVE_t wavfile = hWAVE::initWAVE_t();
 	hWAVE::loadWAVEFile(&wavfile, fin); 
 	hWAVE::print_WAVE(wavfile);
+	if (wParamStd)
+		if (!hWAVE::WAVEParamsCheck(wavfile.WAVEParams, *wParamStd)) {
+			printf("input file has an unexpected format %s\n", inputWAV);
+		}
+
 	if(config.zeroMeanSigFlag || wavfile.WAVEParams.containerLengthInByte==2)
 		for (int i = 1; i <= wavfile.WAVEParams.numChannels; i++) {
 			hsigProcess::ZeroMean(wavfile.DATA.data[i]);
@@ -462,8 +500,8 @@ void MFCCWapper(const char* inputWAV, const char* outputFile, MFCCWapperTempStru
 	else if (config.saveType == 3) {
 		bf.numFrames = rowNum; bf.lengthFrame = 10000;
 		bf.sizeFrameInByte = step * 4; bf.typeFlag = 0x49;
-		fout = fopen(outputFile, "rb");
-		if (!fout) { printf("open result.dat failed\n"); system("pause");  exit(1); }
+		fout = fopen(outputFile, "wb");
+		if (!fout) { printf("open %s failed\n",outputFile); system("pause");  exit(1); }
 		printf("writing the doc...\n");
 		writeBinaryFile(fout, bf, dpostProc);
 		fclose(fout);
