@@ -17,34 +17,6 @@ using namespace hWAVE;
 using namespace hsigProcess;
 using namespace hfileIO;
 
-/*含义
-pi
-wlen 窗长度
-inc 位移量
-bankNum mel滤波器组的个数
-MFCCNum MFCC参量的个数
-delwin 计算加速系数时的窗口大小
-energyFlag 是否计算能量
-zeroCrossingFlag 是否计算过零率
-brightFlag 是否计算谱中心
-subBankEFlag 是否计算子带能量以及个数
-regreOrder 加速系数的阶数，1为静态参量，2为静态参量和一阶加速系数，3为静态参量和一阶加速系数和二阶加速系数
-*/
-
-/*  最后参量的排列分别为 ( MFCCNum+energyFlag+zeroCrossingFlag+brightFlag+subBankEFlag )*regreOrder  */
-/*  最后参量的排列分别为 ( MFCC+能量+过零率+谱中心+子带能量 )*阶数  */
-
-/*程序基本结构
-1.读取pcm文件,并转化为十进制
-2.计算MFCC系数以及其他参量
-3.能量归一化
-4.计算加速系数
-5.MFCC参量归一归整
-6.写入目标文件
-*/
-
-
-
 
 int main(int argc, char** argv) {
 
