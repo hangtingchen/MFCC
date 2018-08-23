@@ -4,7 +4,7 @@ mfcc : main.o hmath.o ini.o mfcc.o sigProcess.o WAVE.o cnpy.o fileIO.o
 	g++ -o mfcc main.o hmath.o ini.o mfcc.o sigProcess.o WAVE.o cnpy.o fileIO.o -fopenmp
 
 main.o:main.c ../inih/ini.h $(P1)/hmath.hpp mfcc.h $(P1)/sigProcess.hpp $(P1)/WAVE.hpp cnpy.hpp
-	g++ -c main.c -I ../inih -I $(P1)
+	g++ -c main.c -I ../inih -I $(P1) -fopenmp
 
 mfcc.o:mfcc.c mfcc.h $(P1)/hmath.hpp $(P1)/sigProcess.hpp $(P1)/WAVE.hpp $(P1)/fileIO.hpp cnpy.hpp
 	g++ -c mfcc.c -I ../inih -I $(P1)
