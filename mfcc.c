@@ -388,7 +388,7 @@ void MFCCWapper(const char* inputWAV, const char* outputFile, MFCCWapperTempStru
 			printf("input file has an unexpected format %s\n", inputWAV);
 		}
 
-	if(config.zeroMeanSigFlag || wavfile.WAVEParams.containerLengthInByte==2)
+	if(config.zeroMeanSigFlag || wavfile.WAVEParams.containerLengthInByte==1)
 		for (int i = 1; i <= wavfile.WAVEParams.numChannels; i++) {
 			hsigProcess::ZeroMean(wavfile.DATA.data[i]);
 		}
