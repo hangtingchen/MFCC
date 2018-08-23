@@ -83,12 +83,6 @@ static int handler(void* user, const char* section, const char* name, const char
 	else if (MATCH("Frame", "zeroMeanSigFlag")) { pconfig->zeroMeanSigFlag = atoi(value); }
 	else if (MATCH("Frame", "wlen")) { pconfig->wlen = atoi(value); }
 	else if (MATCH("Frame", "inc")) { pconfig->inc = atoi(value); }
-	else if (MATCH("Frame", "saveType")) {
-		if (strcmp(value, "f\0") == 0)pconfig->saveType = 0;
-		else if (strcmp(value, "n\0") == 0) pconfig->saveType = 2;
-		else if (strcmp(value, "b\0") == 0) pconfig->saveType = 3;
-		else pconfig->saveType = 1;
-	}
 	else if (MATCH("Frame", "vecNum")) { pconfig->vecNum = atoi(value); }
 	else if (MATCH("MFCC", "fbankFlag")) { pconfig->fbankFlag = atoi(value); }
 	else if (MATCH("MFCC", "bankNum")) { pconfig->bankNum = atoi(value); }
@@ -102,6 +96,12 @@ static int handler(void* user, const char* section, const char* name, const char
 	else if (MATCH("Regression", "znormFlag")) { pconfig->znormFlag = atoi(value); }
 	else if (MATCH("Regression", "regreOrder")) { pconfig->regreOrder = atoi(value); }
 	else if (MATCH("Regression", "delwin")) { pconfig->delwin = atoi(value); }
+	else if (MATCH("IO", "saveType")) {
+		if (strcmp(value, "f\0") == 0)pconfig->saveType = 0;
+		else if (strcmp(value, "n\0") == 0) pconfig->saveType = 2;
+		else if (strcmp(value, "b\0") == 0) pconfig->saveType = 3;
+		else pconfig->saveType = 1;
+	}
 	else if (MATCH("IO", "fileList")) { strcpy(pconfig->fileList, value); }
 	else if (MATCH("IO", "numThreads")) { pconfig->numThreads = atoi(value); }
 	else return 0;
