@@ -65,21 +65,23 @@ You should prepare WAV files first(.wav), then a config file and a list. The fol
 
 The WAV should be PCM encoding and has a standard 44-byte head. (It's okay if there exists additional information chunk between 44-byte head and data chunk.) Don't worry about this, for most of WAV files are satisfied. If the wav is transformed from mp3 or other format, have a look at the head first. 
 
-You should check wav if No new information displayed in the screen for a long time while running the program. 
+You should check WAV if No new information displayed in the screen for a long time while running the program. 
 
 ## config
 
-A standard config is `example/config.ini`. The options listed should all be included. No promise for the program if you skip some options.
+The config is read using `inih`(https://github.com/benhoyt/inih). A standard config is `example/config.ini` under `MFCC` directory. The options listed should all be included. No promise for the program if you skip some options.
+
+Website(https://github.com/hangtingchen/inih/blob/master/examples/test.ini) gives details about `inih`.
 
 ### `Frame` section
 
-This section sets options related to frame.
+This section sets options related to pre-process.
 
 | Key | Value | Notes |
 | :------| :------ | :------ |
 | sampleRate | 8000/16000/44100/others | The sample rate should be set at first, which means the wav files should have same sample rate. |
 | lowpassfre | >0 && <hipassfre && <sampleRate | The min frequency |
-| hipassfre | >0 && >hipassfre && <sampleRate | The max frequency |
+| hipassfre | >0 && >lowpassfre && <=sampleRate | The max frequency |
 | preemphasise | =0 no preemphasise; 0-1 preemphasise the signal | The coefficient of preemphasise |
 | zeroMeanSigFlag | 0/1 | whether to make input signal have a zero mean |
 | wlen | wlen=(wlenInTime(ms))*sampleRate/1000 | the number of samples of window |
@@ -107,26 +109,26 @@ This section controls some other features.
 | zeroCrossingFlag | 0/1 | Whether to include average zero crossing rate |
 | brightFlag | 0/1 | Whether to include brightness |
 | subBandEFlag | =0, No subBand energy; >0 set the number of subband | |
-| fftLength |  >=0 | Output fft. This is only for debug. |
+| fftLength |  >=0 | Output fft. This is only for debugging. |
 
 ### `Regression` section
 
-This section controls post operation.
+This section controls post-process.
 
 | Key | Value | Notes |
 | :------| :------ | :------ |
-| znormFlag | 0/1 | Whether to do z-norm in each dimension |
-| regreOrder | =1,no diff;=2 first order diff; and so on | The degree of diff + 1 |
+| znormFlag | 0/1 | Whether to do z-norm in each dimension within the single audio |
+| regreOrder | =1,no diff;=2 first order diff; and so on | (The degree of diff) + 1 |
 | delwin | >0 | The context length of diff; If regreOrder=1, this option has no effect |
 
 ### `IO` section
 
-This section controls how to read file and store feature.
+This section controls how to read file and store features.
 
 | Key | Value | Notes |
 | :------| :------ | :------ |
 | fileList | | The position of list of files |
-| saveType | f/e/n/b | csv(float)/csv(scientific)/npy(numpy)/binary |
+| saveType | f/e/n/b | csv(double)/csv(scientific)/npy(numpy)/binary |
 | numThreads | >0 | The number of threads.(Only when openmp is supported.) |
 
 ## file list
@@ -135,7 +137,8 @@ Each line in the list should include the source WAV and target feature, separate
 
 # Notes
 
++ The main interface is `MFCCWapper` in `mfcc.c` in case you want to extract feature in your own code or you don't want to control so many options. 
 + The program has set up `hmath` and `hsigProcess` according to HTK.
 + Recommend to use `masterCPlus` branch.
-+ The anomaly detection is not perfect. Please pay attention to your config.
++ The anomaly detection is not perfect. Please pay attention to your config and file list.
 + Though the code in `masterCPlus` is C++, the style is still C,and so is the memory application and release.
