@@ -10,7 +10,7 @@
 
 using namespace hmath;
 
-void configCheck(Config* config){
+void hMFCC::configCheck(hMFCC::Config* config){
 	if (!(config->sampleRate == 44100 || config->sampleRate == 8000
 		|| config->sampleRate == 16000)) {
 		printf("Unusual sample rate %d\n", config->sampleRate);
@@ -43,13 +43,13 @@ void configCheck(Config* config){
 	}
 }
 
-double Mel(int k, double fres)
+double hMFCC::Mel(int k, double fres)
 {
 	return 1127 * log(1 + (k - 1)*fres);
 }
 
 /* EXPORT->WarpFreq: return warped frequency */
-double WarpFreq(double fcl, double fcu, double freq, double minFreq, double maxFreq, double alpha)
+double hMFCC::WarpFreq(double fcl, double fcu, double freq, double minFreq, double maxFreq, double alpha)
 {
 	if (alpha == 1.0)
 		return freq;
@@ -71,12 +71,12 @@ double WarpFreq(double fcl, double fcu, double freq, double minFreq, double maxF
 }
 
 /* EXPORT->InitFBank: Initialise an FBankInfo record */
-FBankInfo InitFBank(int frameSize, double sampPeriod, int numChans,
+hMFCC::FBankInfo hMFCC::InitFBank(int frameSize, double sampPeriod, int numChans,
 	double lopass, double hipass, int usePower, int takeLogs,
 	int doubleFFT,
 	double alpha, double warpLowCut, double warpUpCut)
 {
-	FBankInfo fb;
+	hMFCC::FBankInfo fb;
 	double mlo, mhi, ms, melk;
 	int k, chan, maxChan, Nby2;
 
@@ -94,7 +94,7 @@ FBankInfo InitFBank(int frameSize, double sampPeriod, int numChans,
 	maxChan = numChans + 1;
 	/* set lo and hi pass cut offs if any */
 	fb.klo = 2; fb.khi = Nby2;       /* apply lo/hi pass filtering */
-	mlo = 0; mhi = Mel(Nby2 + 1, fb.fres);
+	mlo = 0; mhi = hMFCC::Mel(Nby2 + 1, fb.fres);
 	if (lopass >= 0.0) {
 		mlo = 1127 * log(1 + lopass / 700.0);
 		fb.klo = (int)((lopass * sampPeriod * 1.0e-7 * fb.fftN) + 2.5);
@@ -123,14 +123,14 @@ FBankInfo InitFBank(int frameSize, double sampPeriod, int numChans,
 
 			cf = 700 * (exp(cf / 1127.0) - 1.0);
 
-			fb.cf[chan] = 1127.0 * log(1.0 + WarpFreq(warpLowCut, warpUpCut, cf, minFreq, maxFreq, alpha) / 700.0);
+			fb.cf[chan] = 1127.0 * log(1.0 + hMFCC::WarpFreq(warpLowCut, warpUpCut, cf, minFreq, maxFreq, alpha) / 700.0);
 		}
 	}
 
 	/* Create loChan map, loChan[fftindex] -> lower channel index */
 	fb.loChan = CreateIntVec(Nby2);
 	for (k = 1, chan = 1; k <= Nby2; k++) {
-		melk = Mel(k, fb.fres);
+		melk = hMFCC::Mel(k, fb.fres);
 		if (k<fb.klo || k>fb.khi) fb.loChan[k] = -1;
 		else {
 			while (fb.cf[chan] < melk  && chan <= maxChan) ++chan;
@@ -145,10 +145,10 @@ FBankInfo InitFBank(int frameSize, double sampPeriod, int numChans,
 		if (k<fb.klo || k>fb.khi) fb.loWt[k] = 0.0;
 		else {
 			if (chan>0)
-				fb.loWt[k] = ((fb.cf[chan + 1] - Mel(k, fb.fres)) /
+				fb.loWt[k] = ((fb.cf[chan + 1] - hMFCC::Mel(k, fb.fres)) /
 				(fb.cf[chan + 1] - fb.cf[chan]));
 			else
-				fb.loWt[k] = (fb.cf[1] - Mel(k, fb.fres)) / (fb.cf[1] - mlo);
+				fb.loWt[k] = (fb.cf[1] - hMFCC::Mel(k, fb.fres)) / (fb.cf[1] - mlo);
 		}
 	}
 	/* Create workspace for fft */
@@ -157,7 +157,7 @@ FBankInfo InitFBank(int frameSize, double sampPeriod, int numChans,
 }
 
 /* EXPORT->Wave2FBank:  Perform filterbank analysis on speech s */
-void Wave2FBank(Vector s, Vector fbank, double *te,double* te2, FBankInfo info)
+void hMFCC::Wave2FBank(Vector s, Vector fbank, double *te,double* te2, hMFCC::FBankInfo info)
 {
 	const double melfloor = 1.0;
 	const double energyfloor = 1.0;
@@ -215,7 +215,7 @@ void Wave2FBank(Vector s, Vector fbank, double *te,double* te2, FBankInfo info)
 }
 
 /* EXPORT->FBank2MFCC: compute first n cepstral coeff */
-void FBank2MFCC(Vector fbank, Vector c, int n)
+void hMFCC::FBank2MFCC(Vector fbank, Vector c, int n)
 {
 	int j, k, numChan;
 	double mfnorm, pi_factor, x;
@@ -232,7 +232,7 @@ void FBank2MFCC(Vector fbank, Vector c, int n)
 	}
 }
 
-double FBank2C0(Vector fbank)
+double hMFCC::FBank2C0(Vector fbank)
 {
 	int k, numChan;
 	double mfnorm, sum;
@@ -246,7 +246,7 @@ double FBank2C0(Vector fbank)
 }
 
 /* EXPORT-> FFT: apply fft/invfft to complex s */
-void FFT(Vector s, int invert)
+void hMFCC::FFT(Vector s, int invert)
 {
 	int ii, jj, n, nn, limit, m, j, inc, i;
 	double wx, wr, wpr, wpi, wi, theta;
@@ -297,7 +297,7 @@ void FFT(Vector s, int invert)
 }
 
 /* EXPORT-> Realft: apply fft to real s */
-void Realft(Vector s)
+void hMFCC::Realft(Vector s)
 {
 	int n, n2, i, i1, i2, i3, i4;
 	double xr1, xi1, xr2, xi2, wrs, wis;
@@ -305,7 +305,7 @@ void Realft(Vector s)
 
 	n = VectorSize(s) / 2; n2 = n / 2;
 	theta = pi / n;
-	FFT(s, 0);
+	hMFCC::FFT(s, 0);
 	x = sin(0.5 * theta);
 	yr2 = -2.0 * x * x;
 	yi2 = sin(theta); yr = 1.0 + yr2; yi = yi2;
@@ -328,14 +328,14 @@ void Realft(Vector s)
 	s[2] = 0.0;
 }
 
-MFCCWapperTempStruct MFCCWapperTempInit(Config config) {
-	FBankInfo* fbVec = (FBankInfo*)malloc(sizeof(FBankInfo)*config.numThreads);
+hMFCC::MFCCWapperTempStruct hMFCC::MFCCWapperTempInit(hMFCC::Config config) {
+	hMFCC::FBankInfo* fbVec = (hMFCC::FBankInfo*)malloc(sizeof(hMFCC::FBankInfo)*config.numThreads);
 	hmath::Vector hamWin = hsigProcess::GenHamWindow(config.wlen);
 	hmath::Matrix subBankEnergy = NULL;
 	hmath::Matrix fbank = CreateMatrix(config.numThreads, config.bankNum);
 	hmath::Matrix d2 = CreateMatrix(config.numThreads, config.wlen);
 	hmath::Matrix d3 = CreateMatrix(config.numThreads, config.MFCCNum);
-	MFCCWapperTempStruct mfccWapperTempStruct = { NULL,NULL,NULL,NULL,NULL,NULL };
+	hMFCC::MFCCWapperTempStruct mfccWapperTempStruct = { NULL,NULL,NULL,NULL,NULL,NULL };
 	if (config.subBandEFlag > 0)subBankEnergy = CreateMatrix(config.numThreads, config.subBandEFlag);
 
 	for (int i = 0; i < config.numThreads; i++) {
@@ -347,7 +347,8 @@ MFCCWapperTempStruct MFCCWapperTempInit(Config config) {
 	return mfccWapperTempStruct;
 }
 
-void MFCCWapperTempFree(MFCCWapperTempStruct* mwts,Config config)
+
+void hMFCC::MFCCWapperTempFree(hMFCC::MFCCWapperTempStruct* mwts, hMFCC::Config config)
 {
 	FreeMatrix(mwts->d2); mwts->d2 = NULL;
 	FreeMatrix(mwts->d3); mwts->d3 = NULL;
@@ -365,8 +366,8 @@ void MFCCWapperTempFree(MFCCWapperTempStruct* mwts,Config config)
 	}
 }
 
-void MFCCWapper(const char* inputWAV, const char* outputFile, MFCCWapperTempStruct mwts,
-	Config config,int threadNum, const hWAVE::WAVEParams_t * const wParamStd) {
+void hMFCC::MFCCWapper(const char* inputWAV, const char* outputFile, hMFCC::MFCCWapperTempStruct mwts,
+	hMFCC::Config config,int threadNum, const hWAVE::WAVEParams_t * const wParamStd) {
 	FILE* fin = NULL,*fout=NULL;
 	int otherFeatureNum = config.MFCC0thFlag + config.energyFlag +
 		config.zeroCrossingFlag + config.brightFlag + config.subBandEFlag + config.fftLength;
@@ -448,10 +449,10 @@ void MFCCWapper(const char* inputWAV, const char* outputFile, MFCCWapperTempStru
 			if (config.subBandEFlag)hsigProcess::calSubBankE(mwts.fbVec[threadNum-1].x, mwts.subBankEnergy[threadNum]);
 			//计算MFCC系数
 			if (config.fbankFlag) CopyVector(mwts.fbank[threadNum],mwts.d3[threadNum]);
-			else FBank2MFCC(mwts.fbank[threadNum], mwts.d3[threadNum], config.MFCCNum);
+			else hMFCC::FBank2MFCC(mwts.fbank[threadNum], mwts.d3[threadNum], config.MFCCNum);
 			//迁移数据，并且根据flag加上部分特征
 			for (int j0 = 1; j0 <= config.MFCCNum; j0++, curr_pos++)dpostProc[curr_pos] = mwts.d3[threadNum][j0];
-			if (config.MFCC0thFlag) { dpostProc[curr_pos] = FBank2C0(mwts.fbank[threadNum]); curr_pos++; }
+			if (config.MFCC0thFlag) { dpostProc[curr_pos] = hMFCC::FBank2C0(mwts.fbank[threadNum]); curr_pos++; }
 			if (config.energyFlag) { dpostProc[curr_pos] = log(te); curr_pos++; }
 			if (config.zeroCrossingFlag) { dpostProc[curr_pos] = zc; curr_pos++; } //printf("%f\n", zc);
 			if (config.brightFlag) { dpostProc[curr_pos] = brightness; curr_pos++; };

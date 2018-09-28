@@ -16,6 +16,7 @@ using namespace hmath;
 using namespace hWAVE;
 using namespace hsigProcess;
 using namespace hfileIO;
+using namespace hMFCC;
 
 
 int main(int argc, char** argv) {
