@@ -2,6 +2,8 @@
 
 C/C++ code to extract MFCC or FBank features from wav files.
 
+# masterCPLus should be used. The mater branch may not be updated in time.
+
 # Install
 
 1. Download following code from my GitHub and put these three directories under the same root directory.
