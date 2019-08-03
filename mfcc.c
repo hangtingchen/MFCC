@@ -41,6 +41,10 @@ void hMFCC::configCheck(hMFCC::Config* config){
 		printf("Check your sampleRate wlen inc fftLength numThreads\n");
 		exit(1);
 	}
+	if (config->regreOrder <=0 ) {
+		printf("RegreOrder should be >=1 and 1 means no diff coeffs.");
+		exit(1);
+	}
 }
 
 double hMFCC::Mel(int k, double fres)
@@ -90,7 +94,7 @@ hMFCC::FBankInfo hMFCC::InitFBank(int frameSize, double sampPeriod, int numChans
 	if (doubleFFT)
 		fb.fftN *= 2;
 	Nby2 = fb.fftN / 2;
-	fb.fres = 1.0E7 / (sampPeriod * fb.fftN * 700.0);//700Ô´ÓÚmel scale
+	fb.fres = 1.0E7 / (sampPeriod * fb.fftN * 700.0);//700æºäºmel scale
 	maxChan = numChans + 1;
 	/* set lo and hi pass cut offs if any */
 	fb.klo = 2; fb.khi = Nby2;       /* apply lo/hi pass filtering */
@@ -421,9 +425,9 @@ void hMFCC::MFCCWapper(const char* inputWAV, const char* outputFile, hMFCC::MFCC
 	dpostProc = CreateVector(((config.MFCCNum + otherFeatureNum) * config.vecNum* config.regreOrder *rowNum));
 	printf("total coef size: %d\n", VectorSize(dpostProc));
 
-	/*2.¼ÆËãMFCCÏµÊıÒÔ¼°ÆäËû²ÎÁ¿*/
-	//d2,d3·Ö±ğÎª¾­¹ımelÂË²¨Æ÷×éµÄĞÅºÅ£¬MFCC²ÎÊı
-	//×îÖÕµÄÊı¾İ
+	/*2.è®¡ç®—MFCCç³»æ•°ä»¥åŠå…¶ä»–å‚é‡*/
+	//d2,d3åˆ†åˆ«ä¸ºç»è¿‡melæ»¤æ³¢å™¨ç»„çš„ä¿¡å·ï¼ŒMFCCå‚æ•°
+	//æœ€ç»ˆçš„æ•°æ®
 	for (int j = 0; j < rowNum; j ++) {
 		if (config.vecNum > NumRows(d1)) {
 			printf("vecnum %d > num_channels %d ", config.vecNum, config.channels);
@@ -436,21 +440,21 @@ void hMFCC::MFCCWapper(const char* inputWAV, const char* outputFile, hMFCC::MFCC
 			for (int i = 1; i <= config.wlen && j*config.inc+i<= config.sampleNum ; i++)
 				mwts.d2[threadNum][i] = d1[i0][i + j*config.inc];
 			//				if (j == 0)ShowVector(d2);
-			//¼ÆËã¹ıÁãÂÊ
+			//è®¡ç®—è¿‡é›¶ç‡
 			double zc = hsigProcess::zeroCrossingRate(mwts.d2[threadNum], config.wlen);
-			//¼Ó´°
+			//åŠ çª—
 			hsigProcess::Ham(mwts.d2[threadNum],mwts.hamWin,config. wlen);
-			//teºÍte2·Ö±ğÊÇ¸ù¾İĞÅºÅºÍfftºóµÄĞÅºÅ¼ÆËãµÄÄÜÁ¿
-			//¾­¹ımelÂË²¨Æ÷×é
+			//teå’Œte2åˆ†åˆ«æ˜¯æ ¹æ®ä¿¡å·å’Œfftåçš„ä¿¡å·è®¡ç®—çš„èƒ½é‡
+			//ç»è¿‡melæ»¤æ³¢å™¨ç»„
 			Wave2FBank(mwts.d2[threadNum], mwts.fbank[threadNum], &te, &te2, mwts.fbVec[threadNum-1]);
 			//				if (j == 0)ShowVector(fbank);
-			//¼ÆËãÆ×ÖĞĞÄºÍ×Ó´øÄÜÁ¿£¬¶¼ÊÇ°Ù·ÖÊı
+			//è®¡ç®—è°±ä¸­å¿ƒå’Œå­å¸¦èƒ½é‡ï¼Œéƒ½æ˜¯ç™¾åˆ†æ•°
 			brightness = hsigProcess::calBrightness(mwts.fbVec[threadNum-1].x);
 			if (config.subBandEFlag)hsigProcess::calSubBankE(mwts.fbVec[threadNum-1].x, mwts.subBankEnergy[threadNum]);
-			//¼ÆËãMFCCÏµÊı
+			//è®¡ç®—MFCCç³»æ•°
 			if (config.fbankFlag) CopyVector(mwts.fbank[threadNum],mwts.d3[threadNum]);
 			else hMFCC::FBank2MFCC(mwts.fbank[threadNum], mwts.d3[threadNum], config.MFCCNum);
-			//Ç¨ÒÆÊı¾İ£¬²¢ÇÒ¸ù¾İflag¼ÓÉÏ²¿·ÖÌØÕ÷
+			//è¿ç§»æ•°æ®ï¼Œå¹¶ä¸”æ ¹æ®flagåŠ ä¸Šéƒ¨åˆ†ç‰¹å¾
 			for (int j0 = 1; j0 <= config.MFCCNum; j0++, curr_pos++)dpostProc[curr_pos] = mwts.d3[threadNum][j0];
 			if (config.MFCC0thFlag) { dpostProc[curr_pos] = hMFCC::FBank2C0(mwts.fbank[threadNum]); curr_pos++; }
 			if (config.energyFlag) { dpostProc[curr_pos] = log(te); curr_pos++; }
@@ -462,22 +466,22 @@ void hMFCC::MFCCWapper(const char* inputWAV, const char* outputFile, hMFCC::MFCC
 		curr_pos += (config.MFCCNum + otherFeatureNum) * (config.regreOrder - 1)* config.vecNum;
 	}
 	printf("post-processing...\n");
-	//¼ÆËã¼ÓËÙ²ÎÁ¿
+	//è®¡ç®—åŠ é€Ÿå‚é‡
 	//	NormaliseLogEnergy(&dpostProc[1 + MFCCNum], rowNum, step, 50.0, 0.1);
-	/*3.ÄÜÁ¿¹éÒ»»¯*/
+	/*3.èƒ½é‡å½’ä¸€åŒ–*/
 	//	NormaliseLogEnergy2(&dpostProc[1 + MFCCNum], rowNum, step);
-	/*4.¼ÆËã¼ÓËÙÏµÊı*/
+	/*4.è®¡ç®—åŠ é€Ÿç³»æ•°*/
 	for (int j = 1; j < config.regreOrder; j++) {
 		hsigProcess::Regress(&dpostProc[1+(j-1)*vSize], vSize, rowNum, step, vSize, config.delwin, 0, 0, 0);
 	}
-	/*5.MFCC²ÎÁ¿¹éÒ»¹éÕû*/
-	//MFCCÏµÊı¾ùÖµ·½²î¹éÕû£¬²»¶ÔÆäËû²ÎÊı×ö´Ë²Ù×÷
+	/*5.MFCCå‚é‡å½’ä¸€å½’æ•´*/
+	//MFCCç³»æ•°å‡å€¼æ–¹å·®å½’æ•´ï¼Œä¸å¯¹å…¶ä»–å‚æ•°åšæ­¤æ“ä½œ
 	if (config.znormFlag) {
 		hsigProcess::ZNormalize(&dpostProc[1], step, rowNum, step);
 	}
-	//	À©´ó
+	//	æ‰©å¤§
 	//	for (int i = 1; i <= VectorSize(dpostProc); i++)dpostProc[i] *= 10.0;
-	/*6.Ğ´ÈëÄ¿±êÎÄ¼ş*/
+	/*6.å†™å…¥ç›®æ ‡æ–‡ä»¶*/
 	if (config.saveType == 0) {
 		fout = fopen(outputFile, "w");
 		if (!fout) { printf("open result.dat failed\n"); system("pause");  exit(1); }
