@@ -46,8 +46,11 @@ int main(int argc, char** argv) {
 		printf("Fail to open %s", config.fileList);
 	}
 	while (fileList.getline(fileNameBuf, maxBuffLength)) {
-		fileListString.push_back( strtok(fileNameBuf, "\t"));
-		fileListString.push_back( strtok(NULL, "\n"));
+        pchs=strtok(fileNameBuf,"\t");pcht=strtok(NULL,"\n");
+        	if(pcht==NULL){pchs=strtok(fileNameBuf," ");pcht=strtok(NULL,"\n");}
+        	if(pcht==NULL){printf("Unable to found delimeter tab or space in filelist\n");return 1;}
+        	fileListString.push_back(pchs);
+		fileListString.push_back(pcht);
 	}
 	fileList.close();
 
