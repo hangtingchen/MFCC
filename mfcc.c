@@ -12,7 +12,7 @@ using namespace hmath;
 
 void hMFCC::configCheck(hMFCC::Config* config){
 	if (!(config->sampleRate == 44100 || config->sampleRate == 8000
-		|| config->sampleRate == 16000)) {
+		|| config->sampleRate == 16000 || config->sampleRate == 48000)) {
 		printf("Unusual sample rate %d\n", config->sampleRate);
 	}
 	config->samplePeriod = (double)1e7 / (double)config->sampleRate;
