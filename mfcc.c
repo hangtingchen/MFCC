@@ -423,6 +423,7 @@ void hMFCC::MFCCWapper(const char* inputWAV, const char* outputFile, hMFCC::MFCC
 	fclose(fin); hWAVE::free_WAVE(&wavfile);
 
 	dpostProc = CreateVector(((config.MFCCNum + otherFeatureNum) * config.vecNum* config.regreOrder *rowNum));
+	printf("The feature if of dimension %d * (%d * %d * %d)\n",rowNum,config.vecNum,config.regreOrder,(config.MFCCNum + otherFeatureNum));
 	printf("total coef size: %d\n", VectorSize(dpostProc));
 
 	/*2.计算MFCC系数以及其他参量*/
