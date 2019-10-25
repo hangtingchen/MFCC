@@ -22,7 +22,9 @@ using namespace hMFCC;
 int main(int argc, char** argv) {
 
 	Config config;
-
+    	char * pchs;
+    	char * pcht;
+	
 	int i0 = ini_parse(argv[1], handler, &config);
 	if (i0<0) {
 		printf("Can't load '.ini'\n");
